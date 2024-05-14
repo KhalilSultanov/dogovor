@@ -1,0 +1,318 @@
+<!-- dogovor_PBN_form.html -->
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форма для заполнения договора</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+            margin: 0;
+        }
+
+        h2 {
+            text-align: center;
+            color: #4a54f1;
+            padding-bottom: 20px;
+        }
+
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        label {
+            font-weight: 500;
+            margin-top: 10px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="email"],
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #4a54f1;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #3a44b1;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        var tzCheckbox = document.getElementById('design_layouts');
+        var wordpressOptions = document.getElementById('wordpress_options');
+
+        function toggleWordPressOptions() {
+            if (tzCheckbox.checked) {
+                wordpressOptions.style.display = 'none';
+            } else {
+                wordpressOptions.style.display = 'block';
+            }
+        }
+
+        tzCheckbox.addEventListener('change', toggleWordPressOptions);
+        toggleWordPressOptions();
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        var regionSelect = document.getElementById('region_name');
+        var customRegionInput = document.getElementById('custom_region_name');
+        var customRegionContainer = document.getElementById('custom_region_container');
+
+        function toggleCustomRegion() {
+            if (regionSelect.value === 'Другой') {
+                customRegionContainer.style.display = 'block';
+            } else {
+                customRegionContainer.style.display = 'none';
+                customRegionInput.value = ''; // Очистка поля, если не 'Другой'
+            }
+        }
+
+        regionSelect.addEventListener('change', toggleCustomRegion);
+        toggleCustomRegion();
+    });
+</script>
+<body>
+
+<h2>Форма для заполнения договора</h2>
+
+
+<form action="/dogovor_position/" method="post">
+    {% csrf_token %}
+    <label for="contract_number">Договор №:</label>
+    <input type="number" id="contract_number" name="contract_number" step="1" required><br><br>
+
+    <label for="day">День:</label>
+    <select id="day" name="date_day">
+    </select>
+    <label for="month">Месяц:</label>
+    <select id="month" name="date_month" onchange="updateDays()">
+        <option value="Январь">Январь</option>
+        <option value="Февраль">Февраль</option>
+        <option value="Март">Март</option>
+        <option value="Апрель">Апрель</option>
+        <option value="Май">Май</option>
+        <option value="Июнь">Июнь</option>
+        <option value="Июль">Июль</option>
+        <option value="Август">Август</option>
+        <option value="Сентябрь">Сентябрь</option>
+        <option value="Октябрь">Октябрь</option>
+        <option value="Ноябрь">Ноябрь</option>
+        <option value="Декабрь">Декабрь</option>
+    </select>
+    <label for="year">Год:</label>
+    <select id="year" name="date_year" onchange="updateDays()">
+    </select><br><br>
+
+    <script>
+        // Функция обновления дней в зависимости от выбранного месяца и года
+        function updateDays() {
+            const monthSelect = document.getElementById("month");
+            const month = monthSelect.selectedIndex + 1; // Получаем месяц как число
+            const year = parseInt(document.getElementById("year").value);
+            const daySelect = document.getElementById("day");
+
+            // Определение количества дней в месяце
+            const daysInMonth = new Date(year, month, 0).getDate();
+
+            // Очистка предыдущих дней
+            daySelect.innerHTML = '';
+
+            // Добавление новых опций для дней
+            for (let day = 1; day <= daysInMonth; day++) {
+                const option = document.createElement("option");
+                option.value = day;
+                option.text = day;
+                daySelect.add(option);
+            }
+        }
+
+        // Инициализация годов и дней
+        function initialize() {
+            const yearSelect = document.getElementById("year");
+            const currentYear = new Date().getFullYear();
+
+            // Добавление диапазона годов
+            for (let year = currentYear - 10; year <= currentYear + 10; year++) {
+                const option = document.createElement("option");
+                option.value = year;
+                option.text = year;
+                yearSelect.add(option);
+            }
+
+            // Выбор текущего года и месяца
+            yearSelect.value = currentYear;
+            document.getElementById("month").value = new Date().getMonth() + 1;
+
+            // Обновление дней
+            updateDays();
+        }
+
+        // Запуск инициализации при загрузке страницы
+        window.onload = initialize;
+    </script>
+
+    <label for="organization_name">Наименование организации:</label>
+    <input type="text" id="organization_name" name="organization_name" required minlength="2"><br><br>
+
+    <label for="region_name">Название региона:</label>
+    <select id="region_name" name="region_name">
+        <option value="СПб">СПб</option>
+        <option value="Мск">Мск</option>
+        <option value="Другой">Другой</option>
+    </select><br><br>
+
+    <div id="custom_region_container" style="display:none;">
+        <label for="custom_region_name">Укажите ваш регион:</label>
+        <input type="text" id="custom_region_name" name="custom_region_name"><br><br>
+    </div>
+
+    <label for="site_name">Название сайта:</label>
+    <input type="text" id="site_name" name="site_name" required><br><br>
+
+    <label for="search_engine">Поисковая система:</label>
+    <select id="search_engine" name="search_engine">
+        <option value="YANDEX">Яндекс</option>
+        <option value="GOOGLE">Google</option>
+    </select><br><br>
+
+    <label>Внутренняя оптимизация сайта:</label><br>
+    <div>
+        <input type="checkbox" id="optimization_headers" name="services[]" value="optimization_headers">
+        <label for="optimization_headers">- Оптимизация заголовков страниц;</label><br>
+
+        <input type="checkbox" id="optimization_metatags" name="services[]" value="optimization_metatags">
+        <label for="optimization_metatags">- Оптимизация метатегов;</label><br>
+
+        <input type="checkbox" id="writing_optimization" name="services[]" value="writing_optimization">
+        <label for="writing_optimization">- Написание текстов с помощью нейросетей и их оптимизация;</label><br>
+
+        <input type="checkbox" id="site_structure_optimization" name="services[]" value="site_structure_optimization">
+        <label for="site_structure_optimization">- Оптимизация структуры сайта;</label><br>
+
+        <input type="checkbox" id="technical_error_fixing" name="services[]" value="technical_error_fixing">
+        <label for="technical_error_fixing">- Устранение технических ошибок на сайте;</label><br>
+
+        <input type="checkbox" id="design_layouts" name="services[]" value="design_layouts">
+        <label for="design_layouts">- Техническое задание (ТЗ) на создание дизайн-макетов отдельных блоков или страниц
+            на сайте;</label><br>
+
+        <input type="checkbox" id="creating_pages" name="services[]" value="creating_pages">
+        <label for="creating_pages">- Создание страниц на сайте;</label><br>
+    </div>
+    <br>
+
+
+    <div id="wordpress_options">
+        <label>Дополнительные работы:</label><br>
+        <label for="platform_wordpress">WordPress:</label>
+        <input type="radio" id="platform_wordpress" name="platform" value="wordpress" required>
+        <label for="platform_not_wordpress">Не WordPress:</label>
+        <input type="radio" id="platform_not_wordpress" name="platform" value="not_wordpress">
+    </div>
+    <br>
+
+
+    <label>Поддержка и сопровождение:</label><br>
+    <div>
+        <input type="checkbox" id="support_site" name="support[]" value="support_site">
+        <label for="support_site">- Поддержка сайта в техническом плане;</label><br>
+    </div>
+    <br>
+
+
+    <label for="site_name">Стоимость работ цифрами:</label>
+    <input type="number" id="price_count_digit" name="price_count_digit"><br><br>
+
+    <label for="edo">По ЭДО:</label>
+    <select id="edo" name="edo">
+        <option value="YES">Да</option>
+        <option value="NO">Нет</option>
+    </select><br><br>
+
+    <label for="reason">Основание договора:</label>
+    <input type="text" id="reason" name="reason" required><br><br>
+
+    <label for="person_name">Заказчик в лице:</label>
+    <input type="text" id="person_name" name="person_name" placeholder="ФИО в род. падеже" required><br><br>
+
+    <label for="director_name">ФИО директора:</label>
+    <input type="text" id="director_name" name="director_name" required><br><br>
+
+    <label for="email">Email заказчика:</label>
+    <input type="email" id="email" name="email" required><br><br>
+
+    <label for="inn">ИНН:</label>
+    <input type="text" id="inn" name="inn" pattern="\d{10}|\d{12}" title="ИНН должен содержать 10 или 12 цифр" required><br><br>
+
+    <label for="ogrn">ОГРН:</label>
+    <input type="text" id="ogrn" name="ogrn" pattern="\d{13}|\d{15}" title="ОГРН должен содержать 13 или 15 цифр"
+           required><br><br>
+
+    <label for="registration_address">Адрес регистрации:</label>
+    <input type="text" id="registration_address" name="registration_address" required><br><br>
+
+    <label for="checking_account">Расчетный счет:</label>
+    <input type="text" id="checking_account" name="checking_account" pattern="\d{20}"
+           title="Расчетный счет должен содержать 20 цифр" required><br><br>
+
+    <label for="correspondent_account">Корреспондентский счет:</label>
+    <input type="text" id="correspondent_account" name="correspondent_account" pattern="\d{20}"
+           title="Корреспондентский счет должен содержать 20 цифр" required><br><br>
+
+    <label for="bank_name">Название банка:</label>
+    <input type="text" id="bank_name" name="bank_name" required><br><br>
+
+    <label for="bic">БИК:</label>
+    <input type="text" id="bic" name="bic" pattern="\d{9}" title="БИК должен содержать 9 цифр" required><br><br>
+
+
+    <label for="req_count_top10">Количество запросов для ТОП10:</label>
+    <input type="number" step="1" id="req_count_top10" name="req_count_top10"><br><br>
+
+    <label for="req_count_top5">Количество запросов для ТОП5:</label>
+    <input type="number" step="1" id="req_count_top5" name="req_count_top5"><br><br>
+
+    <label for="req_count_top3">Количество запросов для ТОП3:</label>
+    <input type="number" step="1" id="req_count_top3" name="req_count_top3"><br><br>
+
+    <label for="topvisor">Ссылка на проверку позиций в онлайн-сервисе Топвизор:</label>
+    <input type="text" id="topvisor" name="topvisor"><br><br>
+
+    <input type="submit" value="Скачать договор">
+</form>
+
+
+</body>
+</html>

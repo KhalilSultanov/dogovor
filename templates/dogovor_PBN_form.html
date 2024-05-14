@@ -1,0 +1,283 @@
+<!-- dogovor_PBN_form.html -->
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+            margin: 0;
+        }
+
+        h2 {
+            text-align: center;
+            color: #4a54f1;
+            padding-bottom: 20px;
+        }
+
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        label {
+            font-weight: 500;
+            margin-top: 10px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="email"],
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box; /* Adds padding and border to the element's total width and height */
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #4a54f1;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #3a44b1;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <title>Форма для заполнения договора</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            function updateSignatureVisibility() {
+                var edoSelectValue = document.getElementById("edo").value;
+                var signatureBlock = document.getElementById("signature_options");
+                if (edoSelectValue === "NO") {
+                    signatureBlock.style.display = "block";
+                } else {
+                    signatureBlock.style.display = "none";
+                }
+            }
+
+            document.getElementById("edo").addEventListener("change", updateSignatureVisibility);
+            updateSignatureVisibility();
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            function updateSiteCreationVisibility() {
+                var predmetValue = document.getElementById("predmet").value;
+                var siteCreationOptions = document.getElementById("site_creation_options");
+                if (predmetValue === "DROP_SEARCH") {
+                    siteCreationOptions.style.display = "block";
+                } else {
+                    siteCreationOptions.style.display = "none";
+                }
+            }
+
+            document.getElementById("predmet").addEventListener("change", updateSiteCreationVisibility);
+            updateSiteCreationVisibility();
+        });
+
+        function addRow() {
+            const table = document.getElementById('anchors_table');
+            const newRow = table.insertRow(-1);
+            const cell1 = newRow.insertCell(0);
+            const cell2 = newRow.insertCell(1);
+            cell1.innerHTML = '<input type="text" name="anchor_names[]" placeholder="Название запроса">';
+            cell2.innerHTML = '<input type="text" name="anchor_urls[]" placeholder="Адрес страницы">';
+        }
+
+        function deleteRow() {
+            const table = document.getElementById('anchors_table');
+            if (table.rows.length > 1) {
+                table.deleteRow(-1);
+            }
+        }
+    </script>
+</head>
+<body>
+
+<h2>Форма для заполнения договора</h2>
+
+
+<form action="/dogovor_pbn/" method="post">
+    {% csrf_token %}
+    <label for="contract_number">Договор №:</label>
+    <input type="number" id="contract_number" name="contract_number" step="1" required><br><br>
+
+    <label for="day">День:</label>
+    <select id="day" name="date_day">
+    </select>
+    <label for="month">Месяц:</label>
+    <select id="month" name="date_month" onchange="updateDays()">
+        <option value="Январь">Январь</option>
+        <option value="Февраль">Февраль</option>
+        <option value="Март">Март</option>
+        <option value="Апрель">Апрель</option>
+        <option value="Май">Май</option>
+        <option value="Июнь">Июнь</option>
+        <option value="Июль">Июль</option>
+        <option value="Август">Август</option>
+        <option value="Сентябрь">Сентябрь</option>
+        <option value="Октябрь">Октябрь</option>
+        <option value="Ноябрь">Ноябрь</option>
+        <option value="Декабрь">Декабрь</option>
+    </select>
+    <label for="year">Год:</label>
+    <select id="year" name="date_year" onchange="updateDays()">
+    </select><br><br>
+
+    <script>
+        // Функция обновления дней в зависимости от выбранного месяца и года
+        function updateDays() {
+            const monthSelect = document.getElementById("month");
+            const month = monthSelect.selectedIndex + 1; // Получаем месяц как число
+            const year = parseInt(document.getElementById("year").value);
+            const daySelect = document.getElementById("day");
+
+            // Определение количества дней в месяце
+            const daysInMonth = new Date(year, month, 0).getDate();
+
+            // Очистка предыдущих дней
+            daySelect.innerHTML = '';
+
+            // Добавление новых опций для дней
+            for (let day = 1; day <= daysInMonth; day++) {
+                const option = document.createElement("option");
+                option.value = day;
+                option.text = day;
+                daySelect.add(option);
+            }
+        }
+
+        // Инициализация годов и дней
+        function initialize() {
+            const yearSelect = document.getElementById("year");
+            const currentYear = new Date().getFullYear();
+
+            // Добавление диапазона годов
+            for (let year = currentYear - 10; year <= currentYear + 10; year++) {
+                const option = document.createElement("option");
+                option.value = year;
+                option.text = year;
+                yearSelect.add(option);
+            }
+
+            // Выбор текущего года и месяца
+            yearSelect.value = currentYear;
+            document.getElementById("month").value = new Date().getMonth() + 1;
+
+            // Обновление дней
+            updateDays();
+        }
+
+        // Запуск инициализации при загрузке страницы
+        window.onload = initialize;
+    </script>
+
+    <label for="organization_name">Наименование организации:</label>
+    <input type="text" id="organization_name" name="organization_name" required minlength="2"><br><br>
+
+
+    <label for="predmet">Предмет договора:</label>
+    <select id="predmet" name="predmet" onchange="updateSiteCreationVisibility();">
+        <option value="ARENDA_LINKS">Аренда ссылок</option>
+        <option value="DROP_SEARCH">Поиск дропов</option>
+    </select><br><br>
+
+    <div id="site_creation_options" style="display:none;">
+        <label for="site_creation">Кем создаются сайты:</label>
+        <select id="site_creation" name="site_creation">
+            <option value="ISPOLNITEL">Исполнителем</option>
+            <option value="ZAKAZCHIK">Заказчиком</option>
+        </select><br><br>
+    </div>
+
+
+    <label for="edo">По ЭДО:</label>
+    <select id="edo" name="edo">
+        <option value="YES">Да</option>
+        <option value="NO">Нет</option>
+    </select><br><br>
+
+    <label for="reason">Основание договора:</label>
+    <input type="text" id="reason" name="reason" required><br><br>
+
+    <label for="person_name">Заказчик в лице:</label>
+    <input type="text" id="person_name" name="person_name" placeholder="ФИО в род. падеже" required><br><br>
+
+    <label for="director_name">ФИО директора:</label>
+    <input type="text" id="director_name" name="director_name" required><br><br>
+
+    <label for="email">Email заказчика:</label>
+    <input type="email" id="email" name="email" required><br><br>
+
+
+    <label for="month_count">Действие договора в течении:</label>
+    <select id="month_count" name="month_count">
+        <option value="1 месяца">1 месяца</option>
+        <option value="2 месяцев">2 месяцев</option>
+        <option value="3 месяцев">3 месяцев</option>
+        <option value="4 месяцев">4 месяцев</option>
+        <option value="5 месяцев">5 месяцев</option>
+        <option value="6 месяцев">6 месяцев</option>
+        <option value="7 месяцев">7 месяцев</option>
+        <option value="8 месяцев">8 месяцев</option>
+        <option value="9 месяцев">9 месяцев</option>
+        <option value="10 месяцев">10 месяцев</option>
+        <option value="11 месяцев">11 месяцев</option>
+        <option value="12 месяцев">12 месяцев</option>
+    </select><br><br>
+
+    <label for="inn">ИНН:</label>
+    <input type="text" id="inn" name="inn" pattern="\d{10}|\d{12}" title="ИНН должен содержать 10 или 12 цифр" required><br><br>
+
+    <label for="ogrn">ОГРН:</label>
+    <input type="text" id="ogrn" name="ogrn" pattern="\d{13}|\d{15}" title="ОГРН должен содержать 13 или 15 цифр"
+           required><br><br>
+
+    <label for="registration_address">Адрес регистрации:</label>
+    <input type="text" id="registration_address" name="registration_address" required><br><br>
+
+    <label for="checking_account">Расчетный счет:</label>
+    <input type="text" id="checking_account" name="checking_account" pattern="\d{20}"
+           title="Расчетный счет должен содержать 20 цифр" required><br><br>
+
+    <label for="correspondent_account">Корреспондентский счет:</label>
+    <input type="text" id="correspondent_account" name="correspondent_account" pattern="\d{20}"
+           title="Корреспондентский счет должен содержать 20 цифр" required><br><br>
+
+    <label for="bank_name">Название банка:</label>
+    <input type="text" id="bank_name" name="bank_name" required><br><br>
+
+    <label for="bic">БИК:</label>
+    <input type="text" id="bic" name="bic" pattern="\d{9}" title="БИК должен содержать 9 цифр" required><br><br>
+
+
+    <input type="submit" value="Скачать договор">
+</form>
+
+
+</body>
+</html>
