@@ -37,7 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'dogovor_pbn'
+    'dogovor_fix',
+    'dogovor_pbn',
+    'dogovor_pf',
+    'dogovor_position',
+    'dogovor_site_create',
+    'dogovor_traffic',
 ]
 
 MIDDLEWARE = [
