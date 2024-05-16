@@ -26,7 +26,7 @@
             background: white;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             max-width: 600px;
             margin: 20px auto;
         }
@@ -111,7 +111,7 @@
 <form action="/dogovor_position/" method="post">
     {% csrf_token %}
     <label for="contract_number">Договор №:</label>
-    <input type="number" id="contract_number" name="contract_number" step="1" required><br><br>
+    <input type="text" id="contract_number" name="contract_number" step="1" pattern="[0-9\-]+" required><br><br>
 
     <label for="day">День:</label>
     <select id="day" name="date_day">
@@ -198,7 +198,7 @@
         <input type="text" id="custom_region_name" name="custom_region_name"><br><br>
     </div>
 
-    <label for="site_name">Название сайта:</label>
+    <label for="site_name">Ссылка на сайт:</label>
     <input type="text" id="site_name" name="site_name" required><br><br>
 
     <label for="search_engine">Поисковая система:</label>
@@ -261,13 +261,13 @@
         <option value="NO">Нет</option>
     </select><br><br>
 
-    <label for="reason">Основание договора:</label>
+    <label for="reason">На основании чего действует Заказчик (Устав/ОГРН) в родительном падеже:</label>
     <input type="text" id="reason" name="reason" required><br><br>
 
     <label for="person_name">Заказчик в лице:</label>
     <input type="text" id="person_name" name="person_name" placeholder="ФИО в род. падеже" required><br><br>
 
-    <label for="director_name">ФИО директора:</label>
+    <label for="director_name">Фамилия и инициалы директора:</label>
     <input type="text" id="director_name" name="director_name" required><br><br>
 
     <label for="email">Email заказчика:</label>
