@@ -2,12 +2,11 @@ import os
 from django.http import HttpResponse
 from django.shortcuts import render
 from docx import Document
-from docx.shared import Pt
+from docx.shared import Pt, Inches
 from num2words import num2words
 
 
 def replace_paragraph_text_with_styles(paragraph, new_text):
-
     if paragraph.runs:
         style = paragraph.runs[0].style
         font = paragraph.runs[0].font
@@ -24,6 +23,7 @@ def replace_paragraph_text_with_styles(paragraph, new_text):
     run.bold = is_bold
     run.font.name = font_name
     run.font.size = font_size
+
 
 def handle_additional_work_sections(doc, selected_services, platform_choice):
     # Найти начальный и конечный индексы параграфов для удаления
@@ -51,7 +51,9 @@ def handle_additional_work_sections(doc, selected_services, platform_choice):
     for paragraph in doc.paragraphs:
         if '{WORD_PRESS}' in paragraph.text or '{NOT_WORD_PRESS}' in paragraph.text:
             if platform_choice == 'wordpress':
-                text = paragraph.text.replace('{WORD_PRESS}', 'Работы программиста по результатам коммерческого аудита. Работы программиста после проведения других аудитов включены в счёт').replace('{NOT_WORD_PRESS}', '')
+                text = paragraph.text.replace('{WORD_PRESS}',
+                                              'Работы программиста по результатам коммерческого аудита. Работы программиста после проведения других аудитов включены в счёт').replace(
+                    '{NOT_WORD_PRESS}', '')
             elif platform_choice == 'not_wordpress':
                 text = paragraph.text.replace('{WORD_PRESS}', '').replace('{NOT_WORD_PRESS}', 'Работы программиста.')
             else:
@@ -60,100 +62,144 @@ def handle_additional_work_sections(doc, selected_services, platform_choice):
 
 
 def calculate_and_replace_tags_10(doc, request):
-    req_count_top10 = int(request.POST.get('req_count_top10'))
-    region_name = request.POST.get('region_name')
-    search_engine = request.POST.get('search_engine')
+    has_semantics = request.POST.get('has_semantics')
+    if has_semantics == 'yes':
+        req_count_top10 = int(request.POST.get('req_count_top10'))
+        region_name = request.POST.get('region_name')
+        search_engine = request.POST.get('search_engine')
 
-    # Определяем базовую стоимость запроса в зависимости от региона
-    if region_name in ['СПб', 'Мск']:
-        req_pay = 300  # Цена за запрос в топ-10 для СПб и Мск
+        # Получаем стоимость запросов для Google, если выбраны Google или Яндекс и Google
+        google_req_cost = 0
+        if search_engine in ['GOOGLE', 'YANDEX_GOOGLE']:
+            google_req_cost = int(request.POST.get('google_req_cost'))
+
+        # Получаем стоимость запросов в зависимости от региона
+        if region_name == 'Мск':
+            req_pay = int(request.POST.get('req_count_top10_msk'))
+        elif region_name == 'СПб':
+            req_pay = int(request.POST.get('req_count_top10_spb'))
+        else:
+            req_pay = int(request.POST.get('req_count_top10_other'))
+
+        # Добавляем стоимость запросов для Google, если применимо
+        req_pay += google_req_cost
+
+        # Заменяем теги в документе
+        replace_tag_with_text(doc, '{REQ_PAY_10}', str(req_pay))
+        replace_tag_with_text(doc, '{REQ_PAY_WORDS_10}', num2words(req_pay, lang='ru'))
+
+        total_premium = req_pay * req_count_top10
+        for i in range(10, 101, 10):
+            percent = i / 100
+            tag = '{PREM_TOP10_' + str(i) + '}'
+            prem_value = int(total_premium * percent)
+            replace_tag_with_text(doc, tag, str(prem_value))
     else:
-        req_pay = 200  # Цена за запрос в топ-10 для других регионов
+        # Если семантика отсутствует, заменяем теги на пустые строки
+        replace_tag_with_text(doc, '{REQ_PAY_10}', "__________")
+        replace_tag_with_text(doc, '{REQ_PAY_WORDS_10}', "__________")
+        for i in range(10, 101, 10):
+            tag = '{PREM_TOP10_' + str(i) + '}'
+            replace_tag_with_text(doc, tag, "__________")
 
-    # Увеличиваем стоимость на 100 руб., если поисковик Google
-    if search_engine == 'GOOGLE':
-        req_pay += 100
-
-    # Замена меток стоимости запроса
-    replace_tag_with_text(doc, '{REQ_PAY_10}', str(req_pay))
-    replace_tag_with_text(doc, '{REQ_PAY_WORDS_10}', num2words(req_pay, lang='ru'))
-
-    # Расчет и замена меток для премий
-    total_premium = req_pay * req_count_top10
-    for i in range(10, 101, 10):
-        percent = i / 100
-        tag = '{PREM_TOP10_' + str(i) + '}'
-        prem_value = int(total_premium * percent)
-        replace_tag_with_text(doc, tag, str(prem_value))
 
 def calculate_and_replace_tags_5(doc, request):
-    req_count_top5 = int(request.POST.get('req_count_top5'))
-    region_name = request.POST.get('region_name')
-    search_engine = request.POST.get('search_engine')
+    has_semantics = request.POST.get('has_semantics')
+    if has_semantics == 'yes':
+        req_count_top5 = int(request.POST.get('req_count_top5'))
+        region_name = request.POST.get('region_name')
+        search_engine = request.POST.get('search_engine')
 
-    # Определяем базовую стоимость запроса в зависимости от региона
-    if region_name in ['СПб', 'Мск']:
-        req_pay = 500  # Цена за запрос в топ-10 для СПб и Мск
+        # Получаем стоимость запросов для Google, если выбраны Google или Яндекс и Google
+        google_req_cost = 0
+        if search_engine in ['GOOGLE', 'YANDEX_GOOGLE']:
+            google_req_cost = int(request.POST.get('google_req_cost'))
+
+        # Получаем стоимость запросов в зависимости от региона
+        if region_name == 'Мск':
+            req_pay = int(request.POST.get('req_count_top5_msk'))
+        elif region_name == 'СПб':
+            req_pay = int(request.POST.get('req_count_top5_spb'))
+        else:
+            req_pay = int(request.POST.get('req_count_top5_other'))
+
+        # Добавляем стоимость запросов для Google, если применимо
+        req_pay += google_req_cost
+
+        # Заменяем теги в документе
+        replace_tag_with_text(doc, '{REQ_PAY_5}', str(req_pay))
+        replace_tag_with_text(doc, '{REQ_PAY_WORDS_5}', num2words(req_pay, lang='ru'))
+
+        total_premium = req_pay * req_count_top5
+        for i in range(10, 101, 10):
+            percent = i / 100
+            tag = '{PREM_TOP5_' + str(i) + '}'
+            prem_value = int(total_premium * percent)
+            replace_tag_with_text(doc, tag, str(prem_value))
     else:
-        req_pay = 250  # Цена за запрос в топ-10 для других регионов
+        # Если семантика отсутствует, заменяем теги на пустые строки
+        replace_tag_with_text(doc, '{REQ_PAY_5}', "__________")
+        replace_tag_with_text(doc, '{REQ_PAY_WORDS_5}', "__________")
+        for i in range(10, 101, 10):
+            tag = '{PREM_TOP5_' + str(i) + '}'
+            replace_tag_with_text(doc, tag, "__________")
 
-    # Увеличиваем стоимость на 100 руб., если поисковик Google
-    if search_engine == 'GOOGLE':
-        req_pay += 100
-
-    # Замена меток стоимости запроса
-    replace_tag_with_text(doc, '{REQ_PAY_5}', str(req_pay))
-    replace_tag_with_text(doc, '{REQ_PAY_WORDS_5}', num2words(req_pay, lang='ru'))
-
-    # Расчет и замена меток для премий
-    total_premium = req_pay * req_count_top5
-    for i in range(10, 101, 10):
-        percent = i / 100
-        tag = '{PREM_TOP5_' + str(i) + '}'
-        prem_value = int(total_premium * percent)
-        replace_tag_with_text(doc, tag, str(prem_value))
 
 def calculate_and_replace_tags_3(doc, request):
-    req_count_top3 = int(request.POST.get('req_count_top3'))
-    region_name = request.POST.get('region_name')
-    search_engine = request.POST.get('search_engine')
+    has_semantics = request.POST.get('has_semantics')
+    if has_semantics == 'yes':
+        req_count_top3 = int(request.POST.get('req_count_top3'))
+        region_name = request.POST.get('region_name')
+        search_engine = request.POST.get('search_engine')
 
-    # Определяем базовую стоимость запроса в зависимости от региона
-    if region_name in ['СПб', 'Мск']:
-        req_pay = 600  # Цена за запрос в топ-10 для СПб и Мск
+        # Получаем стоимость запросов для Google, если выбраны Google или Яндекс и Google
+        google_req_cost = 0
+        if search_engine in ['GOOGLE', 'YANDEX_GOOGLE']:
+            google_req_cost = int(request.POST.get('google_req_cost'))
+
+        # Получаем стоимость запросов в зависимости от региона
+        if region_name == 'Мск':
+            req_pay = int(request.POST.get('req_count_top3_msk'))
+        elif region_name == 'СПб':
+            req_pay = int(request.POST.get('req_count_top3_spb'))
+        else:
+            req_pay = int(request.POST.get('req_count_top3_other'))
+
+        # Добавляем стоимость запросов для Google, если применимо
+        req_pay += google_req_cost
+
+        # Заменяем теги в документе
+        replace_tag_with_text(doc, '{REQ_PAY_3}', str(req_pay))
+        replace_tag_with_text(doc, '{REQ_PAY_WORDS_3}', num2words(req_pay, lang='ru'))
+
+        total_premium = req_pay * req_count_top3
+        for i in range(10, 101, 10):
+            percent = i / 100
+            tag = '{PREM_TOP3_' + str(i) + '}'
+            prem_value = int(total_premium * percent)
+            replace_tag_with_text(doc, tag, str(prem_value))
     else:
-        req_pay = 300  # Цена за запрос в топ-10 для других регионов
-
-    # Увеличиваем стоимость на 100 руб., если поисковик Google
-    if search_engine == 'GOOGLE':
-        req_pay += 100
-
-    # Замена меток стоимости запроса
-    replace_tag_with_text(doc, '{REQ_PAY_3}', str(req_pay))
-    replace_tag_with_text(doc, '{REQ_PAY_WORDS_3}', num2words(req_pay, lang='ru'))
-
-    # Расчет и замена меток для премий
-    total_premium = req_pay * req_count_top3
-    for i in range(10, 101, 10):
-        percent = i / 100
-        tag = '{PREM_TOP3_' + str(i) + '}'
-        prem_value = int(total_premium * percent)
-        replace_tag_with_text(doc, tag, str(prem_value))
+        # Если семантика отсутствует, заменяем теги на пустые строки
+        replace_tag_with_text(doc, '{REQ_PAY_3}', "__________")
+        replace_tag_with_text(doc, '{REQ_PAY_WORDS_3}', "__________")
+        for i in range(10, 101, 10):
+            tag = '{PREM_TOP3_' + str(i) + '}'
+            replace_tag_with_text(doc, tag, "__________")
 
 
 def handle_conditional_sections(doc, edo):
     edo_text_1 = "(в том числе его получения с использованием системы электронного документооборота)" if edo == "YES" else ""
     edo_text_2 = (
-                "10.4. Стороны согласовали, что они вправе осуществлять документооборот в электронном виде по телекоммуникационным каналам связи с использованием усиленной квалификационной электронной подписи посредством системы электронного документооборота СБИС. " + "\n" +
-                "10.4.1. В целях настоящего договора под электронным документом понимается документ, созданный в электронной форме без предварительного документирования на бумажном носителе, подписанный электронной подписью в порядке, установленном законодательством Российской Федерации. Стороны признают электронные документы, заверенные электронной подпись, при соблюдении требований Федерального закона от 06.04.2011 № 63-ФЗ 'Об электронной подписи' юридически эквивалентным документам на бумажных носителях, заверенным соответствующими подписями и оттиском печатей Сторон. " + "\n" +
-                "10.5. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью." + "\n" +
-                " 10.6. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон. ") \
+            "10.4. Стороны согласовали, что они вправе осуществлять документооборот в электронном виде по телекоммуникационным каналам связи с использованием усиленной квалификационной электронной подписи посредством системы электронного документооборота СБИС. " + "\n" +
+            "10.4.1. В целях настоящего договора под электронным документом понимается документ, созданный в электронной форме без предварительного документирования на бумажном носителе, подписанный электронной подписью в порядке, установленном законодательством Российской Федерации. Стороны признают электронные документы, заверенные электронной подпись, при соблюдении требований Федерального закона от 06.04.2011 № 63-ФЗ 'Об электронной подписи' юридически эквивалентным документам на бумажных носителях, заверенным соответствующими подписями и оттиском печатей Сторон. " + "\n" +
+            "10.5. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью." + "\n" +
+            " 10.6. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон. ") \
         if edo == "YES" else ""
     not_edo_text = "на почту Исполнителя" if edo == "NO" else ""
 
     write_by_hand = (
-                "10.4. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью. " + '\n' +
-                "10.5. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон.)") if edo == "NO" else ""
+            "10.4. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью. " + '\n' +
+            "10.5. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон.)") if edo == "NO" else ""
 
     replacements = {
         '{EDO_1}': edo_text_1,
@@ -162,14 +208,11 @@ def handle_conditional_sections(doc, edo):
         '{WRITE_BY_HAND}': write_by_hand
     }
 
-
     for paragraph in doc.paragraphs:
         for tag, replacement in replacements.items():
             if tag in paragraph.text:
                 paragraph_text = paragraph.text.replace(tag, replacement)
                 replace_paragraph_text_with_styles(paragraph, paragraph_text)
-
-
 
 
 def replace_tag_with_text(doc, tag, text=None):
@@ -184,17 +227,42 @@ def replace_tag_with_text(doc, tag, text=None):
                 p.getparent().remove(p)
                 p._p = p._element = None
 
+
 def process_contract(request):
     if request.method == 'POST':
 
         service_to_tag_mapping = {
-            'optimization_headers': ('{HEAD_PAGES}', '- Оптимизация заголовков страниц;'),
-            'optimization_metatags': ('{METATAGS}', '- Оптимизация метатегов;'),
-            'writing_optimization': ('{NEURO}', '- Написание текстов с помощью нейросетей и их оптимизация;'),
-            'site_structure_optimization': ('{STRUCTURE}', '- Оптимизация структуры сайта;'),
-            'technical_error_fixing': ('{FIX}', '- Устранение технических ошибок на сайте;'),
-            'design_layouts': ('{TZ}', '- Техническое задание (ТЗ) на создание дизайн-макетов отдельных блоков или страниц на сайте;'),
-            'creating_pages': ('{CREATE_PAGES}', '- Создание страниц на сайте;')
+
+            'optimization_headers': ('{HEAD_PAGES_1}', '- Оптимизация заголовков страниц;'),
+            'optimization_headers2': (
+                '{HEAD_PAGES_2}', '- Оптимизация заголовков страниц и техническое задание на их внедрение;'),
+            'optimization_headers3': ('{HEAD_PAGES_3}', ''),
+
+            'optimization_metatags': ('{METATAGS_1}', '- Оптимизация метатегов;'),
+            'optimization_metatags2': (
+                '{METATAGS_2}', '- Оптимизация метатегов и техническое задание на их внедрение;'),
+            'optimization_metatags3': ('{METATAGS_3}', ''),
+
+            'writing_optimization': ('{NEURO_1}', '- Написание текстов с помощью нейросетей и их оптимизация;'),
+            'writing_optimization2': ('{NEURO_2}', '- Техническое задание на написание текстов и их оптимизация;'),
+            'writing_optimization3': ('{NEURO_3}', ''),
+
+            'site_structure_optimization': ('{STRUCTURE_1}', '- Оптимизация структуры сайта;'),
+            'site_structure_optimization2': (
+                '{STRUCTURE_2}', '- Оптимизация структуры сайта и техническое задание на внедрение;'),
+            'site_structure_optimization3': ('{STRUCTURE_3}', ''),
+
+            'technical_error_fixing': ('{FIX_1}', '- Устранение технических ошибок на сайте;'),
+            'technical_error_fixing2': ('{FIX_2}', '- Техническое задание на устранение технических ошибок на сайте;'),
+            'technical_error_fixing3': ('{FIX_3}', ''),
+
+            'design_layouts': (
+                '{TZ_1}',
+                '- Техническое задание (ТЗ) на создание дизайн-макетов отдельных блоков или страниц на сайте;'),
+
+            'creating_pages': ('{CREATE_PAGES_1}', '- Создание страниц на сайте;'),
+            'creating_pages2': ('{CREATE_PAGES_2}', '- Техническое задание на создание страниц на сайте;'),
+            'creating_pages3': ('{CREATE_PAGES_3}', '')
         }
 
         contract_number = request.POST.get('contract_number')
@@ -206,7 +274,6 @@ def process_contract(request):
         if region_name == 'Другой' and custom_region_name:
             region_name = custom_region_name
         search_engine = request.POST.get('search_engine', 'YANDEX')
-
 
         price_count_digit = request.POST.get('price_count_digit')
         price_count_word = num2words(price_count_digit, lang='ru')
@@ -235,22 +302,26 @@ def process_contract(request):
         platform_choice = request.POST.get('platform', None)
         selected_services = request.POST.getlist('services[]')
 
-
-
         template_filename = 'Договор Позиции метки.docx'
         template_path = os.path.join(os.path.dirname(__file__), '../dogovora', template_filename)
         doc = Document(template_path)
+        signature_image_path = os.path.join(os.path.dirname(__file__), '../dogovora/podpis.jpg')
 
         calculate_and_replace_tags_10(doc, request)
         calculate_and_replace_tags_5(doc, request)
         calculate_and_replace_tags_3(doc, request)
 
         for paragraph in doc.paragraphs:
-            if '{YANDEX}' in paragraph.text or '{GOOGLE}' in paragraph.text:
+            if '{YANDEX}' in paragraph.text or '{GOOGLE}' in paragraph.text or '{YANDEX_GOOGLE}' in paragraph.text:
                 if search_engine == 'YANDEX':
-                    paragraph_text = paragraph.text.replace('{YANDEX}', 'Яндекс').replace('{GOOGLE}', '')
+                    paragraph_text = paragraph.text.replace('{YANDEX}', 'Яндекс').replace('{GOOGLE}', '').replace(
+                        '{YANDEX_GOOGLE}', '')
+                elif search_engine == 'GOOGLE':
+                    paragraph_text = paragraph.text.replace('{YANDEX}', '').replace('{GOOGLE}', 'Google').replace(
+                        '{YANDEX_GOOGLE}', '')
                 else:
-                    paragraph_text = paragraph.text.replace('{YANDEX}', '').replace('{GOOGLE}', 'Google')
+                    paragraph_text = paragraph.text.replace('{YANDEX}', '').replace('{GOOGLE}', '').replace(
+                        '{YANDEX_GOOGLE}', 'Яндекс и Google')
                 replace_paragraph_text_with_styles(paragraph, paragraph_text)
 
         for paragraph in doc.paragraphs:
@@ -263,7 +334,6 @@ def process_contract(request):
             if '{REGION_NAME}' in paragraph.text:
                 paragraph_text = paragraph.text.replace('{REGION_NAME}', region_name)
                 replace_paragraph_text_with_styles(paragraph, paragraph_text)
-
 
         if 'support_site' in support_options:
             support_text = '- Поддержка сайта в техническом плане;'
@@ -284,9 +354,9 @@ def process_contract(request):
         for tag in unused_tags:
             replace_tag_with_text(doc, tag)
 
-
         handle_conditional_sections(doc, edo)
         handle_additional_work_sections(doc, selected_services, platform_choice)
+        print("Selected services:", selected_services)
 
         footer = doc.sections[0].footer
         for paragraph in footer.paragraphs:
@@ -298,7 +368,9 @@ def process_contract(request):
         paragraph.add_run("________________" + director_name + "").font.size = Pt(12)
         paragraph.add_run("                                                                           ").font.size = Pt(
             12)
-        paragraph.add_run("_______________Михайлов Д.С.").font.size = Pt(12)
+        run = paragraph.add_run()
+        run.add_picture(signature_image_path, width=Inches(1))  # Настройте ширину по необходимости
+        paragraph.add_run("Михайлов Д.С.").font.size = Pt(12)
 
         replacements = {
             '{DOGOVOR_NUMBER}': contract_number,
@@ -313,7 +385,6 @@ def process_contract(request):
             '{REGION_NAME}': region_name,
             '{PRICE_COUNT}': price_count_digit,
             '{PRICE_COUNT_IN_WORDS}': price_count_word,
-
 
             '{FIO_DIRECTOR}': director_name,
             '{CUSTOMER_EMAIL}': email,

@@ -5,12 +5,22 @@ from django.http import HttpResponse
 from django.shortcuts import render
 
 from docx import Document
-from docx.shared import Pt
+from docx.shared import Pt, Inches
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.enum.table import WD_ALIGN_VERTICAL
 
+def remove_blank_line_between_points(doc, point1="3.1.", point2="3.2."):
+    paragraphs = list(doc.paragraphs)
+    for idx, paragraph in enumerate(paragraphs):
+        if point1 in paragraph.text and idx + 2 < len(paragraphs):
+            next_paragraph_text = paragraphs[idx + 1].text.strip()
+            following_paragraph_text = paragraphs[idx + 2].text.strip()
+
+            if next_paragraph_text == "" and point2 in following_paragraph_text:
+                remove_paragraph(paragraphs[idx + 1])
+                break
 
 def adjust_paragraph_spacing(doc):
     paragraphs = list(doc.paragraphs)
@@ -191,6 +201,7 @@ def process_contract(request):
 
 
         handle_conditional_sections(doc, predmet, site_creation, edo)
+        signature_image_path = os.path.join(os.path.dirname(__file__), '../dogovora/podpis.jpg')
 
         if predmet == "DROP_SEARCH":
             remove_unnecessary_paragraphs(doc)
@@ -207,8 +218,10 @@ def process_contract(request):
         paragraph.add_run("________________" + director_name + "").font.size = Pt(12)
         paragraph.add_run("                                                                           ").font.size = Pt(
             12)
-        paragraph.add_run("_______________Михайлов Д.С.").font.size = Pt(12)
-
+        run = paragraph.add_run()
+        run.add_picture(signature_image_path, width=Inches(1))  # Настройте ширину по необходимости
+        paragraph.add_run("Михайлов Д.С.").font.size = Pt(12)
+        remove_blank_line_between_points(doc)
         replacements = {
             '{DOGOVOR_NUMBER}': contract_number,
             '{DAY}': date_day,

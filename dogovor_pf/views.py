@@ -2,8 +2,7 @@ import os
 from django.http import HttpResponse
 from django.shortcuts import render
 from docx import Document
-from docx.shared import Pt
-
+from docx.shared import Pt, Inches
 
 
 def replace_paragraph_text_with_styles(paragraph, new_text):
@@ -95,6 +94,7 @@ def process_contract(request):
         template_filename = 'Договор ПФ метки.docx'
         template_path = os.path.join(os.path.dirname(__file__), '../dogovora', template_filename)
         doc = Document(template_path)
+        signature_image_path = os.path.join(os.path.dirname(__file__), '../dogovora/podpis.jpg')
 
         handle_conditional_sections(doc, edo)
 
@@ -108,7 +108,9 @@ def process_contract(request):
         paragraph.add_run("________________" + director_name + "").font.size = Pt(12)
         paragraph.add_run("                                                                           ").font.size = Pt(
             12)
-        paragraph.add_run("_______________Михайлов Д.С.").font.size = Pt(12)
+        run = paragraph.add_run()
+        run.add_picture(signature_image_path, width=Inches(1))  # Настройте ширину по необходимости
+        paragraph.add_run("Михайлов Д.С.").font.size = Pt(12)
 
         replacements = {
             '{DOGOVOR_NUMBER}': contract_number,

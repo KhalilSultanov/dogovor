@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Форма для заполнения договора</title>
+    <title>Форма для заполнения Договора трафик</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <style>
         body {
@@ -73,85 +73,85 @@
 </head>
 <body>
 
-<h2>Форма для заполнения договора</h2>
+<h2>Форма для заполнения Договора трафик</h2>
 
 
 <form id="myForm" action="/dogovor_traffic/" method="post">
     {% csrf_token %}
     <label for="contract_number">Договор №:</label>
     <input type="text" id="contract_number" name="contract_number" step="1" pattern="[0-9\-]+" required><br><br>
-    
-     <label for="day">День:</label>
-     <select id="day" name="date_day">
-  </select>
+
+    <label for="day">День:</label>
+    <select id="day" name="date_day">
+    </select>
     <label for="month">Месяц:</label>
-      <select id="month" name="date_month" onchange="updateDays()">
-    <option value="Январь">Январь</option>
-    <option value="Февраль">Февраль</option>
-    <option value="Март">Март</option>
-    <option value="Апрель">Апрель</option>
-    <option value="Май">Май</option>
-    <option value="Июнь">Июнь</option>
-    <option value="Июль">Июль</option>
-    <option value="Август">Август</option>
-    <option value="Сентябрь">Сентябрь</option>
-    <option value="Октябрь">Октябрь</option>
-    <option value="Ноябрь">Ноябрь</option>
-    <option value="Декабрь">Декабрь</option>
-  </select>
-     <label for="year">Год:</label>
-      <select id="year" name="date_year" onchange="updateDays()">
-      </select><br><br>
+    <select id="month" name="date_month" onchange="updateDays()" required>
+        <option value="Январь">Январь</option>
+        <option value="Февраль">Февраль</option>
+        <option value="Март">Март</option>
+        <option value="Апрель">Апрель</option>
+        <option value="Май">Май</option>
+        <option value="Июнь">Июнь</option>
+        <option value="Июль">Июль</option>
+        <option value="Август">Август</option>
+        <option value="Сентябрь">Сентябрь</option>
+        <option value="Октябрь">Октябрь</option>
+        <option value="Ноябрь">Ноябрь</option>
+        <option value="Декабрь">Декабрь</option>
+    </select>
+    <label for="year">Год:</label>
+    <select id="year" name="date_year" onchange="updateDays()">
+    </select><br><br>
 
-      <script>
-    // Функция обновления дней в зависимости от выбранного месяца и года
-   function updateDays() {
-      const monthSelect = document.getElementById("month");
-      const month = monthSelect.selectedIndex + 1; // Получаем месяц как число
-      const year = parseInt(document.getElementById("year").value);
-      const daySelect = document.getElementById("day");
+    <script>
+        // Функция обновления дней в зависимости от выбранного месяца и года
+        function updateDays() {
+            const monthSelect = document.getElementById("month");
+            const month = monthSelect.selectedIndex + 1; // Получаем месяц как число
+            const year = parseInt(document.getElementById("year").value);
+            const daySelect = document.getElementById("day");
 
-      // Определение количества дней в месяце
-      const daysInMonth = new Date(year, month, 0).getDate();
+            // Определение количества дней в месяце
+            const daysInMonth = new Date(year, month, 0).getDate();
 
-      // Очистка предыдущих дней
-      daySelect.innerHTML = '';
+            // Очистка предыдущих дней
+            daySelect.innerHTML = '';
 
-      // Добавление новых опций для дней
-      for (let day = 1; day <= daysInMonth; day++) {
-        const option = document.createElement("option");
-        option.value = day;
-        option.text = day;
-        daySelect.add(option);
-      }
-    }
+            // Добавление новых опций для дней
+            for (let day = 1; day <= daysInMonth; day++) {
+                const option = document.createElement("option");
+                option.value = day;
+                option.text = day;
+                daySelect.add(option);
+            }
+        }
 
-    // Инициализация годов и дней
-    function initialize() {
-      const yearSelect = document.getElementById("year");
-      const currentYear = new Date().getFullYear();
+        // Инициализация годов и дней
+        function initialize() {
+            const yearSelect = document.getElementById("year");
+            const currentYear = new Date().getFullYear();
 
-      // Добавление диапазона годов
-      for (let year = currentYear - 10; year <= currentYear + 10; year++) {
-        const option = document.createElement("option");
-        option.value = year;
-        option.text = year;
-        yearSelect.add(option);
-      }
+            // Добавление диапазона годов
+            for (let year = currentYear - 10; year <= currentYear + 10; year++) {
+                const option = document.createElement("option");
+                option.value = year;
+                option.text = year;
+                yearSelect.add(option);
+            }
 
-      // Выбор текущего года и месяца
-      yearSelect.value = currentYear;
-      document.getElementById("month").value = new Date().getMonth() + 1;
+            // Выбор текущего года и месяца
+            yearSelect.value = currentYear;
+            document.getElementById("month").value = new Date().getMonth() + 1;
 
-      // Обновление дней
-      updateDays();
-    }
+            // Обновление дней
+            updateDays();
+        }
 
-    // Запуск инициализации при загрузке страницы
-    window.onload = initialize;
-  </script>
+        // Запуск инициализации при загрузке страницы
+        window.onload = initialize;
+    </script>
 
-   <label for="organization_name">Наименование организации:</label>
+    <label for="organization_name">Наименование организации:</label>
     <input type="text" id="organization_name" name="organization_name" required minlength="2"><br><br>
 
 
@@ -163,66 +163,197 @@
     <div>
         <input type="checkbox" id="optimization_headers" name="services[]" value="optimization_headers">
         <label for="optimization_headers">- Оптимизация заголовков страниц;</label><br>
+        <input type="checkbox" id="optimization_headers2" name="services[]" value="optimization_headers2">
+        <label for="optimization_headers2">- Оптимизация заголовков страниц и техническое задание на их
+            внедрение;</label><br>
+        <input type="checkbox" id="optimization_headers3" name="services[]" value="optimization_headers3">
+        <label for="optimization_headers3">- Не вставлять</label><br><br>
+    </div>
 
+    <div>
         <input type="checkbox" id="optimization_metatags" name="services[]" value="optimization_metatags">
         <label for="optimization_metatags">- Оптимизация метатегов;</label><br>
+        <input type="checkbox" id="optimization_headers2" name="services[]" value="optimization_metatags2">
+        <label for="optimization_metatags2">- Оптимизация метатегов и техническое задание на их внедрение;</label><br>
+        <input type="checkbox" id="optimization_metatags3" name="services[]" value="optimization_metatags3">
+        <label for="optimization_metatags3">- Не вставлять</label><br><br>
+    </div>
 
+    <div>
         <input type="checkbox" id="writing_optimization" name="services[]" value="writing_optimization">
-        <label for="writing_optimization">- Написание текстов с помощью нейросетей и их оптимизация;</label><br>
+        <label for="writing_optimization">- Написание текстов с помощью нейросетей и их оптимизация ;</label><br>
+        <input type="checkbox" id="writing_optimization2" name="services[]" value="writing_optimization2">
+        <label for="writing_optimization2">- Техническое задание на написание текстов и их оптимизация;</label><br>
+        <input type="checkbox" id="writing_optimization3" name="services[]" value="writing_optimization3">
+        <label for="writing_optimization3">- Не вставлять;</label><br><br>
+    </div>
 
+    <div>
         <input type="checkbox" id="site_structure_optimization" name="services[]" value="site_structure_optimization">
         <label for="site_structure_optimization">- Оптимизация структуры сайта;</label><br>
+        <input type="checkbox" id="site_structure_optimization2" name="services[]" value="site_structure_optimization2">
+        <label for="site_structure_optimization2">- Оптимизация структуры сайта и техническое задание на
+            внедрение;</label><br>
+        <input type="checkbox" id="site_structure_optimization3" name="services[]" value="site_structure_optimization3">
+        <label for="site_structure_optimization3">- Не вставлять;</label><br><br>
+    </div>
 
+    <div>
         <input type="checkbox" id="technical_error_fixing" name="services[]" value="technical_error_fixing">
         <label for="technical_error_fixing">- Устранение технических ошибок на сайте;</label><br>
+        <input type="checkbox" id="technical_error_fixing2" name="services[]" value="technical_error_fixing2">
+        <label for="technical_error_fixing2">- Техническое задание на устранение технических ошибок на
+            сайте;</label><br>
+        <input type="checkbox" id="technical_error_fixing3" name="services[]" value="technical_error_fixing3">
+        <label for="technical_error_fixing3">- Не вставлять;</label><br><br>
+    </div>
 
+    <div class="design_layouts">
         <input type="checkbox" id="design_layouts" name="services[]" value="design_layouts">
         <label for="design_layouts">- Техническое задание (ТЗ) на создание дизайн-макетов отдельных блоков или страниц
-            на сайте;</label><br>
+            на сайте;</label><br><br>
+    </div>
 
+    <div>
         <input type="checkbox" id="creating_pages" name="services[]" value="creating_pages">
         <label for="creating_pages">- Создание страниц на сайте;</label><br>
+        <input type="checkbox" id="creating_pages2" name="services[]" value="creating_pages2">
+        <label for="creating_pages2">- Техническое задание на создание страниц на сайте;</label><br>
+        <input type="checkbox" id="creating_pages3" name="services[]" value="creating_pages3">
+        <label for="creating_pages3">- Не вставлять;</label><br><br>
     </div>
     <br>
 
 
-    <label for="analitic_system">Аналитика и отчетность:</label><br>
-    <input type="checkbox" id="yandex_web" name="analitic_system" value="yandex_web">
-    <label for="yandex_web">Яндекс.Вебмастер</label><br>
-    <input type="checkbox" id="search_console" name="analitic_system" value="search_console">
-    <label for="search_console">Search Console</label><br><br>
-
-    <label for="analitic_system_user">Сбор и анализ данных о посетителях сайта:</label><br>
-    <input type="checkbox" id="yandex_metric" name="analitic_system_user" value="yandex_metric">
-    <label for="yandex_metric">Яндекс.Метрика</label><br>
-    <input type="checkbox" id="google_analitic" name="analitic_system_user" value="google_analitic">
-    <label for="google_analitic">Google Analytics</label><br><br>
-
     <script>
-        document.getElementById('myForm').addEventListener('submit', function(e) {
+        document.getElementById('myForm').addEventListener('submit', function (e) {
             var analyticsChecked = document.querySelector('input[name="analitic_system"]:checked');
             var dataAnalyticsChecked = document.querySelector('input[name="analitic_system_user"]:checked');
-    
+            var searchSystemChecked = document.querySelector('input[name="search_system"]:checked');
+
             // Проверяем, выбран ли хотя бы один чекбокс в каждой группе
-            if (!analyticsChecked || !dataAnalyticsChecked) {
+            if (!analyticsChecked || !dataAnalyticsChecked || !searchSystemChecked) {
                 alert('Пожалуйста, выберите хотя бы один вариант в каждой группе.');
+
+                // Добавляем подсветку для каждой группы без выбранных чекбоксов
+                if (!analyticsChecked) {
+                    document.querySelector('input[name="analitic_system"]').parentNode.style.border = '1px solid #ff0000';
+                }
+                if (!dataAnalyticsChecked) {
+                    document.querySelector('input[name="analitic_system_user"]').parentNode.style.border = '1px solid #ff0000';
+                }
+
                 e.preventDefault(); // предотвратить отправку формы
             }
         });
     </script>
-        
-    
-    
+    <script type="text/javascript">    // Проверка наличия хотя бы одного выбранного чекбокса при отправке формы
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelector('form').addEventListener('submit', function (event) {
+            let allCategoriesValid = true;
+
+            const excludedContainers = ['support_site', 'design_layouts'];
+
+            excludedContainers.forEach(containerId => {
+                const div = document.querySelector('.' + containerId);
+                if (div) {
+                    div.style.border = 'none'; // Сбрасываем стиль границы
+                }
+            });
+
+            const divContainers = document.querySelectorAll('form > div');
+            divContainers.forEach(div => {
+                const containerId = div.classList[0]; // Получаем класс контейнера
+                if (!excludedContainers.includes(containerId)) {
+                    const checkboxes = div.querySelectorAll('input[type="checkbox"]');
+                    let atLeastOneChecked = false;
+                    let atLeastOneEnabled = false;
+
+                    checkboxes.forEach(checkbox => {
+                        if (checkbox.checked) {
+                            atLeastOneChecked = true;
+                        }
+                        if (!checkbox.disabled) {
+                            atLeastOneEnabled = true;
+                        }
+                    });
+
+                    if (!atLeastOneChecked && atLeastOneEnabled) {
+                        allCategoriesValid = false;
+                        div.style.border = '2px solid #ff0000'; // Красная обводка
+                        div.style.borderRadius = '8px'; // Закругленные углы
+                        div.style.padding = '10px'; // Поля внутри контейнера
+                    } else {
+                        div.style.border = 'none';
+                    }
+                }
+            });
+
+            if (!allCategoriesValid) {
+                event.preventDefault();
+                alert('Необходимо выбрать хотя бы одну услугу в каждой категории.');
+            }
+        });
+    });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Функция для проверки состояния чекбокса WordPress, если не выбрана опция "Техническое задание (ТЗ)"
+            function checkWordPressSelection() {
+                const designLayoutsCheckbox = document.getElementById('design_layouts');
+                const wordpressCheckbox = document.getElementById('platform_wordpress');
+
+                // Если не выбрано "Техническое задание (ТЗ)", убедитесь, что выбран WordPress
+                if (!designLayoutsCheckbox.checked && !wordpressCheckbox.checked) {
+                    alert('Пожалуйста, выберите WordPress, так как вы не выбрали "Техническое задание (ТЗ)".');
+                }
+            }
+
+            // Проверка при изменении состояния чекбокса "Техническое задание (ТЗ)"
+            document.getElementById('design_layouts').addEventListener('change', checkWordPressSelection);
+
+            // Проверка при отправке формы
+            document.querySelector('form').addEventListener('submit', function (event) {
+                checkWordPressSelection(); // Проверка перед отправкой формы
+                const designLayoutsCheckbox = document.getElementById('design_layouts');
+                const wordpressCheckbox = document.getElementById('platform_wordpress');
+
+                // Если не выбрано "Техническое задание (ТЗ)", убедитесь, что выбран WordPress
+                if (!designLayoutsCheckbox.checked && !wordpressCheckbox.checked) {
+                    // Если WordPress не выбран, предотвращаем отправку формы
+                    event.preventDefault();
+                }
+            });
+        });
+
+    </script>
+
+    <div>
+        <label for="analitic_system">Аналитика и отчетность:</label><br>
+        <input type="checkbox" id="yandex_web" name="analitic_system" value="yandex_web">
+        <label for="yandex_web">Яндекс.Вебмастер</label><br>
+        <input type="checkbox" id="search_console" name="analitic_system" value="search_console">
+        <label for="search_console">Search Console</label><br><br>
+    </div>
+
+    <div>
+        <label for="analitic_system_user">Сбор и анализ данных о посетителях сайта:</label><br>
+        <input type="checkbox" id="yandex_metric" name="analitic_system_user" value="yandex_metric">
+        <label for="yandex_metric">Яндекс.Метрика</label><br>
+        <input type="checkbox" id="google_analitic" name="analitic_system_user" value="google_analitic">
+        <label for="google_analitic">Google Analytics</label><br><br>
+    </div>
+
     <div id="wordpress_options">
         <label>Дополнительные работы:</label><br>
         <label for="platform_wordpress">WordPress:</label>
-        <input type="radio" id="platform_wordpress" name="platform" value="wordpress">
+        <input type="radio" id="platform_wordpress" name="platform" value="wordpress" required>
         <label for="platform_not_wordpress">Не WordPress:</label>
         <input type="radio" id="platform_not_wordpress" name="platform" value="not_wordpress">
     </div>
     <br>
     <label>Поддержка и сопровождение:</label><br>
-    <div>
+    <div class="support_site">
         <input type="checkbox" id="support_site" name="support[]" value="support_site">
         <label for="support_site">- Поддержка сайта в техническом плане;</label><br>
     </div>
@@ -247,7 +378,7 @@
 
     <label for="start_date">За период с:</label>
     <input type="date" id="start_date" name="start_date" required>
-    
+
     <label for="end_date">по:</label>
     <input type="date" id="end_date" name="end_date" required><br><br>
 
@@ -262,7 +393,7 @@
         <option value="NO">Нет</option>
     </select><br><br>
 
-       <label for="reason">На основании чего действует Заказчик (Устав/ОГРН) в родительном падеже:</label>
+    <label for="reason">На основании чего действует Заказчик (Устав/ОГРН) в родительном падеже:</label>
     <input type="text" id="reason" name="reason" required><br><br>
 
     <label for="person_name">Заказчик в лице:</label>
@@ -278,16 +409,19 @@
     <input type="text" id="inn" name="inn" pattern="\d{10}|\d{12}" title="ИНН должен содержать 10 или 12 цифр" required><br><br>
 
     <label for="ogrn">ОГРН:</label>
-    <input type="text" id="ogrn" name="ogrn" pattern="\d{13}|\d{15}" title="ОГРН должен содержать 13 или 15 цифр" required><br><br>
+    <input type="text" id="ogrn" name="ogrn" pattern="\d{13}|\d{15}" title="ОГРН должен содержать 13 или 15 цифр"
+           required><br><br>
 
     <label for="registration_address">Адрес регистрации:</label>
     <input type="text" id="registration_address" name="registration_address" required><br><br>
 
     <label for="checking_account">Расчетный счет:</label>
-    <input type="text" id="checking_account" name="checking_account" pattern="\d{20}" title="Расчетный счет должен содержать 20 цифр" required><br><br>
+    <input type="text" id="checking_account" name="checking_account" pattern="\d{20}"
+           title="Расчетный счет должен содержать 20 цифр" required><br><br>
 
     <label for="correspondent_account">Корреспондентский счет:</label>
-    <input type="text" id="correspondent_account" name="correspondent_account" pattern="\d{20}" title="Корреспондентский счет должен содержать 20 цифр" required><br><br>
+    <input type="text" id="correspondent_account" name="correspondent_account" pattern="\d{20}"
+           title="Корреспондентский счет должен содержать 20 цифр" required><br><br>
 
     <label for="bank_name">Название банка:</label>
     <input type="text" id="bank_name" name="bank_name" required><br><br>
@@ -296,10 +430,41 @@
     <input type="text" id="bic" name="bic" pattern="\d{9}" title="БИК должен содержать 9 цифр" required><br><br>
 
 
-
     <input type="submit" value="Скачать договор">
 </form>
 
 
 </body>
 </html>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Обработка события change для чекбоксов
+        const divContainers = document.querySelectorAll('div');
+
+        // Для каждого div-контейнера
+        divContainers.forEach(div => {
+            // Получаем все чекбоксы в текущем контейнере
+            const checkboxes = div.querySelectorAll('input[type="checkbox"]');
+
+            // Добавляем обработчик события change
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    // Если текущий чекбокс отмечен
+                    if (checkbox.checked) {
+                        // Снимаем отметку со всех других чекбоксов в текущем контейнере
+                        checkboxes.forEach(otherCheckbox => {
+                            if (otherCheckbox !== checkbox) {
+                                otherCheckbox.disabled = true;
+                            }
+                        });
+                    } else {
+                        // Если текущий чекбокс не отмечен, разрешаем выбор других чекбоксов
+                        checkboxes.forEach(otherCheckbox => {
+                            otherCheckbox.disabled = false;
+                        });
+                    }
+                });
+            });
+        });
+    });
+</script>

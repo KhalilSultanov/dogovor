@@ -2,8 +2,7 @@ import os
 from django.http import HttpResponse
 from django.shortcuts import render
 from docx import Document
-from docx.shared import Pt
-
+from docx.shared import Pt, Inches
 
 
 def replace_paragraph_text_with_styles(paragraph, new_text):
@@ -134,16 +133,40 @@ def handle_search_engine(doc, search_engine_choice):
 def process_contract(request):
     if request.method == 'POST':
 
+
         service_to_tag_mapping = {
-            'optimization_headers': ('{HEAD_PAGES}', '- Оптимизация заголовков страниц;'),
-            'optimization_metatags': ('{METATAGS}', '- Оптимизация метатегов;'),
-            'writing_optimization': ('{NEURO}', '- Написание текстов с помощью нейросетей и их оптимизация;'),
-            'site_structure_optimization': ('{STRUCTURE}', '- Оптимизация структуры сайта;'),
-            'technical_error_fixing': ('{FIX}', '- Устранение технических ошибок на сайте;'),
+
+            'optimization_headers': ('{HEAD_PAGES_1}', '- Оптимизация заголовков страниц;'),
+            'optimization_headers2': (
+            '{HEAD_PAGES_2}', '- Оптимизация заголовков страниц и техническое задание на их внедрение;'),
+            'optimization_headers3': ('{HEAD_PAGES_3}', ''),
+
+            'optimization_metatags': ('{METATAGS_1}', '- Оптимизация метатегов;'),
+            'optimization_metatags2': (
+            '{METATAGS_2}', '- Оптимизация метатегов и техническое задание на их внедрение;'),
+            'optimization_metatags3': ('{METATAGS_3}', ''),
+
+            'writing_optimization': ('{NEURO_1}', '- Написание текстов с помощью нейросетей и их оптимизация;'),
+            'writing_optimization2': ('{NEURO_2}', '- Техническое задание на написание текстов и их оптимизация;'),
+            'writing_optimization3': ('{NEURO_3}', ''),
+
+            'site_structure_optimization': ('{STRUCTURE_1}', '- Оптимизация структуры сайта;'),
+            'site_structure_optimization2': (
+            '{STRUCTURE_2}', '- Оптимизация структуры сайта и техническое задание на внедрение;'),
+            'site_structure_optimization3': ('{STRUCTURE_3}', ''),
+
+            'technical_error_fixing': ('{FIX_1}', '- Устранение технических ошибок на сайте;'),
+            'technical_error_fixing2': ('{FIX_2}', '- Техническое задание на устранение технических ошибок на сайте;'),
+            'technical_error_fixing3': ('{FIX_3}', ''),
+
             'design_layouts': (
-                '{TZ}', '- Техническое задание (ТЗ) на создание дизайн-макетов отдельных блоков или страниц на сайте;'),
-            'creating_pages': ('{CREATE_PAGES}', '- Создание страниц на сайте;')
+            '{TZ_1}', '- Техническое задание (ТЗ) на создание дизайн-макетов отдельных блоков или страниц на сайте;'),
+
+            'creating_pages': ('{CREATE_PAGES_1}', '- Создание страниц на сайте;'),
+            'creating_pages2': ('{CREATE_PAGES_2}', '- Техническое задание на создание страниц на сайте;'),
+            'creating_pages3': ('{CREATE_PAGES_3}', '')
         }
+
         contract_number = request.POST.get('contract_number')
         date_day = request.POST.get('date_day')
         site_name = request.POST.get('site_name')
@@ -190,6 +213,7 @@ def process_contract(request):
         template_filename = 'Договор Трафик метки.docx'
         template_path = os.path.join(os.path.dirname(__file__), '../dogovora', template_filename)
         doc = Document(template_path)
+        signature_image_path = os.path.join(os.path.dirname(__file__), '../dogovora/podpis.jpg')
 
         if 'support_site' in support_options:
             support_text = '- Поддержка сайта в техническом плане;'
@@ -226,7 +250,9 @@ def process_contract(request):
         paragraph.add_run("________________" + director_name + "").font.size = Pt(12)
         paragraph.add_run("                                                                           ").font.size = Pt(
             12)
-        paragraph.add_run("_______________Михайлов Д.С.").font.size = Pt(12)
+        run = paragraph.add_run()
+        run.add_picture(signature_image_path, width=Inches(1))  # Настройте ширину по необходимости
+        paragraph.add_run("Михайлов Д.С.").font.size = Pt(12)
 
         replacements = {
             '{DOGOVOR_NUMBER}': contract_number,

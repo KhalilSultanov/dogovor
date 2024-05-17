@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Форма для заполнения договора</title>
+    <title>Форма для заполнения Договора Позиции</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <style>
         body {
@@ -105,7 +105,7 @@
 </script>
 <body>
 
-<h2>Форма для заполнения договора</h2>
+<h2>Форма для заполнения Договора Позиции</h2>
 
 
 <form action="/dogovor_position/" method="post">
@@ -117,7 +117,7 @@
     <select id="day" name="date_day">
     </select>
     <label for="month">Месяц:</label>
-    <select id="month" name="date_month" onchange="updateDays()">
+    <select id="month" name="date_month" onchange="updateDays()" required>
         <option value="Январь">Январь</option>
         <option value="Февраль">Февраль</option>
         <option value="Март">Март</option>
@@ -184,7 +184,7 @@
     </script>
 
     <label for="organization_name">Наименование организации:</label>
-    <input type="text" id="organization_name" name="organization_name" required minlength="2"><br><br>
+    <input type="text" id="organization_name" name="organization_name" minlength="2" required><br><br>
 
     <label for="region_name">Название региона:</label>
     <select id="region_name" name="region_name">
@@ -202,42 +202,164 @@
     <input type="text" id="site_name" name="site_name" required><br><br>
 
     <label for="search_engine">Поисковая система:</label>
-    <select id="search_engine" name="search_engine">
+    <select id="search_engine" name="search_engine" onchange="toggleSemanticsFields()">
         <option value="YANDEX">Яндекс</option>
         <option value="GOOGLE">Google</option>
+        <option value="YANDEX_GOOGLE">Яндекс и Google</option>
     </select><br><br>
 
     <label>Внутренняя оптимизация сайта:</label><br>
     <div>
         <input type="checkbox" id="optimization_headers" name="services[]" value="optimization_headers">
         <label for="optimization_headers">- Оптимизация заголовков страниц;</label><br>
+        <input type="checkbox" id="optimization_headers2" name="services[]" value="optimization_headers2">
+        <label for="optimization_headers2">- Оптимизация заголовков страниц и техническое задание на их
+            внедрение;</label><br>
+        <input type="checkbox" id="optimization_headers3" name="services[]" value="optimization_headers3">
+        <label for="optimization_headers3">- Не вставлять</label><br><br>
+    </div>
 
+    <div>
         <input type="checkbox" id="optimization_metatags" name="services[]" value="optimization_metatags">
         <label for="optimization_metatags">- Оптимизация метатегов;</label><br>
+        <input type="checkbox" id="optimization_headers2" name="services[]" value="optimization_metatags2">
+        <label for="optimization_metatags2">- Оптимизация метатегов и техническое задание на их внедрение;</label><br>
+        <input type="checkbox" id="optimization_metatags3" name="services[]" value="optimization_metatags3">
+        <label for="optimization_metatags3">- Не вставлять</label><br><br>
+    </div>
 
+    <div>
         <input type="checkbox" id="writing_optimization" name="services[]" value="writing_optimization">
-        <label for="writing_optimization">- Написание текстов с помощью нейросетей и их оптимизация;</label><br>
+        <label for="writing_optimization">- Написание текстов с помощью нейросетей и их оптимизация ;</label><br>
+        <input type="checkbox" id="writing_optimization2" name="services[]" value="writing_optimization2">
+        <label for="writing_optimization2">- Техническое задание на написание текстов и их оптимизация;</label><br>
+        <input type="checkbox" id="writing_optimization3" name="services[]" value="writing_optimization3">
+        <label for="writing_optimization3">- Не вставлять;</label><br><br>
+    </div>
 
+    <div>
         <input type="checkbox" id="site_structure_optimization" name="services[]" value="site_structure_optimization">
         <label for="site_structure_optimization">- Оптимизация структуры сайта;</label><br>
+        <input type="checkbox" id="site_structure_optimization2" name="services[]" value="site_structure_optimization2">
+        <label for="site_structure_optimization2">- Оптимизация структуры сайта и техническое задание на
+            внедрение;</label><br>
+        <input type="checkbox" id="site_structure_optimization3" name="services[]" value="site_structure_optimization3">
+        <label for="site_structure_optimization3">- Не вставлять;</label><br><br>
+    </div>
 
+    <div>
         <input type="checkbox" id="technical_error_fixing" name="services[]" value="technical_error_fixing">
         <label for="technical_error_fixing">- Устранение технических ошибок на сайте;</label><br>
+        <input type="checkbox" id="technical_error_fixing2" name="services[]" value="technical_error_fixing2">
+        <label for="technical_error_fixing2">- Техническое задание на устранение технических ошибок на
+            сайте;</label><br>
+        <input type="checkbox" id="technical_error_fixing3" name="services[]" value="technical_error_fixing3">
+        <label for="technical_error_fixing3">- Не вставлять;</label><br><br>
+    </div>
 
+    <div class="design_layouts">
         <input type="checkbox" id="design_layouts" name="services[]" value="design_layouts">
         <label for="design_layouts">- Техническое задание (ТЗ) на создание дизайн-макетов отдельных блоков или страниц
-            на сайте;</label><br>
+            на сайте;</label><br><br>
+    </div>
 
+    <div>
         <input type="checkbox" id="creating_pages" name="services[]" value="creating_pages">
         <label for="creating_pages">- Создание страниц на сайте;</label><br>
+        <input type="checkbox" id="creating_pages2" name="services[]" value="creating_pages2">
+        <label for="creating_pages2">- Техническое задание на создание страниц на сайте;</label><br>
+        <input type="checkbox" id="creating_pages3" name="services[]" value="creating_pages3">
+        <label for="creating_pages3">- Не вставлять;</label><br><br>
+
+
     </div>
     <br>
 
+    <script type="text/javascript">    // Проверка наличия хотя бы одного выбранного чекбокса при отправке формы
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelector('form').addEventListener('submit', function (event) {
+            let allCategoriesValid = true;
+
+            const excludedContainers = ['support_site', 'design_layouts'];
+
+            excludedContainers.forEach(containerId => {
+                const div = document.querySelector('.' + containerId);
+                if (div) {
+                    div.style.border = 'none'; // Сбрасываем стиль границы
+                }
+            });
+
+            const divContainers = document.querySelectorAll('form > div');
+            divContainers.forEach(div => {
+                const containerId = div.classList[0]; // Получаем класс контейнера
+                if (!excludedContainers.includes(containerId)) {
+                    const checkboxes = div.querySelectorAll('input[type="checkbox"]');
+                    let atLeastOneChecked = false;
+                    let atLeastOneEnabled = false;
+
+                    checkboxes.forEach(checkbox => {
+                        if (checkbox.checked) {
+                            atLeastOneChecked = true;
+                        }
+                        if (!checkbox.disabled) {
+                            atLeastOneEnabled = true;
+                        }
+                    });
+
+                    if (!atLeastOneChecked && atLeastOneEnabled) {
+                        allCategoriesValid = false;
+                        div.style.border = '2px solid #ff0000'; // Красная обводка
+                        div.style.borderRadius = '8px'; // Закругленные углы
+                        div.style.padding = '10px'; // Поля внутри контейнера
+                    } else {
+                        div.style.border = 'none';
+                    }
+                }
+            });
+
+            if (!allCategoriesValid) {
+                event.preventDefault();
+                alert('Необходимо выбрать хотя бы одну услугу в каждой категории.');
+            }
+        });
+    });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Функция для проверки состояния чекбокса WordPress, если не выбрана опция "Техническое задание (ТЗ)"
+            function checkWordPressSelection() {
+                const designLayoutsCheckbox = document.getElementById('design_layouts');
+                const wordpressCheckbox = document.getElementById('platform_wordpress');
+
+                // Если не выбрано "Техническое задание (ТЗ)", убедитесь, что выбран WordPress
+                if (!designLayoutsCheckbox.checked && !wordpressCheckbox.checked) {
+                    alert('Пожалуйста, выберите WordPress, так как вы не выбрали "Техническое задание (ТЗ)".');
+                }
+            }
+
+            // Проверка при изменении состояния чекбокса "Техническое задание (ТЗ)"
+            document.getElementById('design_layouts').addEventListener('change', checkWordPressSelection);
+
+            // Проверка при отправке формы
+            document.querySelector('form').addEventListener('submit', function (event) {
+                checkWordPressSelection(); // Проверка перед отправкой формы
+                const designLayoutsCheckbox = document.getElementById('design_layouts');
+                const wordpressCheckbox = document.getElementById('platform_wordpress');
+
+                // Если не выбрано "Техническое задание (ТЗ)", убедитесь, что выбран WordPress
+                if (!designLayoutsCheckbox.checked && !wordpressCheckbox.checked) {
+                    // Если WordPress не выбран, предотвращаем отправку формы
+                    event.preventDefault();
+                }
+            });
+        });
+
+    </script>
 
     <div id="wordpress_options">
         <label>Дополнительные работы:</label><br>
         <label for="platform_wordpress">WordPress:</label>
-        <input type="radio" id="platform_wordpress" name="platform" value="wordpress" required>
+        <input type="radio" id="platform_wordpress" name="platform" value="wordpress">
         <label for="platform_not_wordpress">Не WordPress:</label>
         <input type="radio" id="platform_not_wordpress" name="platform" value="not_wordpress">
     </div>
@@ -245,7 +367,7 @@
 
 
     <label>Поддержка и сопровождение:</label><br>
-    <div>
+    <div class="support_site">
         <input type="checkbox" id="support_site" name="support[]" value="support_site">
         <label for="support_site">- Поддержка сайта в техническом плане;</label><br>
     </div>
@@ -253,7 +375,7 @@
 
 
     <label for="site_name">Стоимость работ цифрами:</label>
-    <input type="number" id="price_count_digit" name="price_count_digit"><br><br>
+    <input type="number" id="price_count_digit" name="price_count_digit" required><br><br>
 
     <label for="edo">По ЭДО:</label>
     <select id="edo" name="edo">
@@ -295,24 +417,154 @@
     <input type="text" id="bank_name" name="bank_name" required><br><br>
 
     <label for="bic">БИК:</label>
-    <input type="text" id="bic" name="bic" pattern="\d{9}" title="БИК должен содержать 9 цифр" required><br><br>
+    <input type="text" id="bic" name="bic" pattern="\d{9}" title="БИК должен содержать 9 цифр"><br><br>
 
+    <label for="has_semantics">Есть ли семантика?</label>
+    <select id="has_semantics" name="has_semantics" onchange="toggleSemanticsFields()" required>
+        <option value="no">Нет</option>
+        <option value="yes">Да</option>
+    </select><br><br>
 
-    <label for="req_count_top10">Количество запросов для ТОП10:</label>
-    <input type="number" step="1" id="req_count_top10" name="req_count_top10"><br><br>
+    <div id="semantics_fields" style="display: none;">
+        <div id="req_count_top10_msk_container" style="display:none;">
+            <label for="req_count_top10_msk">Стоимость запросов для ТОП10 в Мск:</label>
+            <input type="number" step="1" id="req_count_top10_msk" name="req_count_top10_msk"><br><br>
+            <label for="req_count_top5_msk">Стоимость запросов для ТОП5 в Мск:</label>
+            <input type="number" step="1" id="req_count_top5_msk" name="req_count_top5_msk"><br><br>
+            <label for="req_count_top3_msk">Стоимость запросов для ТОП3 в Мск:</label>
+            <input type="number" step="1" id="req_count_top3_msk" name="req_count_top3_msk"><br><br>
+        </div>
 
-    <label for="req_count_top5">Количество запросов для ТОП5:</label>
-    <input type="number" step="1" id="req_count_top5" name="req_count_top5"><br><br>
+        <div id="req_count_top10_spb_container" style="display:none;">
+            <label for="req_count_top10_spb">Стоимость запросов для ТОП10 в СПб:</label>
+            <input type="number" step="1" id="req_count_top10_spb" name="req_count_top10_spb"><br><br>
+            <label for="req_count_top5_spb">Стоимость запросов для ТОП5 в СПб:</label>
+            <input type="number" step="1" id="req_count_top5_spb" name="req_count_top5_spb"><br><br>
+            <label for="req_count_top3_spb">Стоимость запросов для ТОП3 в СПб:</label>
+            <input type="number" step="1" id="req_count_top3_spb" name="req_count_top3_spb"><br><br>
+        </div>
 
-    <label for="req_count_top3">Количество запросов для ТОП3:</label>
-    <input type="number" step="1" id="req_count_top3" name="req_count_top3"><br><br>
+        <div id="req_count_top10_other_container" style="display:none;">
+            <label for="req_count_top10_other">Стоимость запросов для ТОП10 в другом регионе:</label>
+            <input type="number" step="1" id="req_count_top10_other" name="req_count_top10_other"><br><br>
+            <label for="req_count_top5_other">Стоимость запросов для ТОП5 в другом регионе:</label>
+            <input type="number" step="1" id="req_count_top5_other" name="req_count_top5_other"><br><br>
+            <label for="req_count_top3_other">Стоимость запросов для ТОП3 в другом регионе:</label>
+            <input type="number" step="1" id="req_count_top3_other" name="req_count_top3_other"><br><br>
+        </div>
 
-    <label for="topvisor">Ссылка на проверку позиций в онлайн-сервисе Топвизор:</label>
-    <input type="text" id="topvisor" name="topvisor"><br><br>
+        <div id="google_req_cost_container" style="display:none;">
+            <label for="google_req_cost">Стоимость запросов для Google:</label>
+            <input type="number" step="1" id="google_req_cost" name="google_req_cost"><br><br>
+        </div>
+
+        <label for="req_count_top10">Количество запросов для ТОП10:</label>
+        <input type="number" step="1" id="req_count_top10" name="req_count_top10"><br><br>
+
+        <label for="req_count_top5">Количество запросов для ТОП5:</label>
+        <input type="number" step="1" id="req_count_top5" name="req_count_top5"><br><br>
+
+        <label for="req_count_top3">Количество запросов для ТОП3:</label>
+        <input type="number" step="1" id="req_count_top3" name="req_count_top3"><br><br>
+
+        <label for="topvisor">Ссылка на проверку позиций в онлайн-сервисе Топвизор:</label>
+        <input type="text" id="topvisor" name="topvisor"><br><br>
+    </div>
+
+    <script>
+        function toggleSemanticsFields() {
+            const semanticsFields = document.getElementById('semantics_fields');
+            const googleReqCostContainer = document.getElementById('google_req_cost_container');
+            const searchEngine = document.getElementById('search_engine').value;
+            const hasSemantics = document.getElementById('has_semantics').value;
+            if (hasSemantics === 'yes') {
+                semanticsFields.style.display = 'block';
+                toggleRegionFields();
+            } else {
+                semanticsFields.style.display = 'none';
+            }
+            if (searchEngine === 'GOOGLE' || searchEngine === 'YANDEX_GOOGLE') {
+                googleReqCostContainer.style.display = 'block';
+            } else {
+                googleReqCostContainer.style.display = 'none';
+            }
+        }
+
+        function toggleRegionFields() {
+            const region = document.getElementById('region_name').value;
+            const reqCountTop10MskContainer = document.getElementById('req_count_top10_msk_container');
+            const reqCountTop10SpbContainer = document.getElementById('req_count_top10_spb_container');
+            const reqCountTop10OtherContainer = document.getElementById('req_count_top10_other_container');
+            const reqCountTop5Msk = document.getElementById('req_count_top5_msk');
+            const reqCountTop3Msk = document.getElementById('req_count_top3_msk');
+            const reqCountTop5Spb = document.getElementById('req_count_top5_spb');
+            const reqCountTop3Spb = document.getElementById('req_count_top3_spb');
+            const reqCountTop5Other = document.getElementById('req_count_top5_other');
+            const reqCountTop3Other = document.getElementById('req_count_top3_other');
+
+            reqCountTop10MskContainer.style.display = 'none';
+            reqCountTop10SpbContainer.style.display = 'none';
+            reqCountTop10OtherContainer.style.display = 'none';
+
+            reqCountTop5Msk.style.display = 'none';
+            reqCountTop3Msk.style.display = 'none';
+            reqCountTop5Spb.style.display = 'none';
+            reqCountTop3Spb.style.display = 'none';
+            reqCountTop5Other.style.display = 'none';
+            reqCountTop3Other.style.display = 'none';
+
+            if (region === 'Мск') {
+                reqCountTop10MskContainer.style.display = 'block';
+                reqCountTop5Msk.style.display = 'block';
+                reqCountTop3Msk.style.display = 'block';
+            } else if (region === 'СПб') {
+                reqCountTop10SpbContainer.style.display = 'block';
+                reqCountTop5Spb.style.display = 'block';
+                reqCountTop3Spb.style.display = 'block';
+            } else {
+                reqCountTop10OtherContainer.style.display = 'block';
+                reqCountTop5Other.style.display = 'block';
+                reqCountTop3Other.style.display = 'block';
+            }
+        }
+
+        // Вызываем toggleRegionFields() при изменении выбранного региона
+        document.getElementById('region_name').addEventListener('change', toggleRegionFields);
+    </script>
 
     <input type="submit" value="Скачать договор">
 </form>
-
-
 </body>
 </html>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Обработка события change для чекбоксов
+        const divContainers = document.querySelectorAll('div');
+
+        // Для каждого div-контейнера
+        divContainers.forEach(div => {
+            // Получаем все чекбоксы в текущем контейнере
+            const checkboxes = div.querySelectorAll('input[type="checkbox"]');
+
+            // Добавляем обработчик события change
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    // Если текущий чекбокс отмечен
+                    if (checkbox.checked) {
+                        // Снимаем отметку со всех других чекбоксов в текущем контейнере
+                        checkboxes.forEach(otherCheckbox => {
+                            if (otherCheckbox !== checkbox) {
+                                otherCheckbox.disabled = true;
+                            }
+                        });
+                    } else {
+                        // Если текущий чекбокс не отмечен, разрешаем выбор других чекбоксов
+                        checkboxes.forEach(otherCheckbox => {
+                            otherCheckbox.disabled = false;
+                        });
+                    }
+                });
+            });
+        });
+    });
+</script>
