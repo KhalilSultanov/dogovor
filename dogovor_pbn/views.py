@@ -8,8 +8,9 @@ from docx import Document
 from docx.shared import Pt, Inches
 from docx.oxml import parse_xml
 from docx.oxml.ns import nsdecls
-from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_COLOR_INDEX
 from docx.enum.table import WD_ALIGN_VERTICAL
+
 
 def remove_blank_line_between_points(doc, point1="3.1.", point2="3.2."):
     paragraphs = list(doc.paragraphs)
@@ -22,6 +23,7 @@ def remove_blank_line_between_points(doc, point1="3.1.", point2="3.2."):
                 remove_paragraph(paragraphs[idx + 1])
                 break
 
+
 def adjust_paragraph_spacing(doc):
     paragraphs = list(doc.paragraphs)
     for idx, paragraph in enumerate(paragraphs):
@@ -31,11 +33,14 @@ def adjust_paragraph_spacing(doc):
             if not next_paragraph_text or next_paragraph_text.startswith("4. Порядок приемки работ"):
                 remove_paragraph(paragraphs[idx + 1])
                 break
+
+
 def remove_unnecessary_paragraphs(doc):
     for paragraph in doc.paragraphs:
         if "4. Анкоры и страницы" in paragraph.text:
             remove_paragraph(paragraph)
             break
+
 
 def remove_paragraph(paragraph):
     p = paragraph._element
@@ -77,10 +82,18 @@ def replace_paragraph_text_with_styles(paragraph, new_text):
         font_size = Pt(9)
 
     paragraph.clear()
-    run = paragraph.add_run(new_text)
-    run.bold = is_bold
-    run.font.name = font_name
-    run.font.size = font_size
+    for idx, word in enumerate(new_text.split()):
+        run = paragraph.add_run(word + " ")
+        run.bold = is_bold
+        run.font.name = font_name
+        run.font.size = font_size
+        if word.strip() in new_text:
+            # Highlight the replaced text with the specified color
+            run.font.highlight_color = WD_COLOR_INDEX.YELLOW  # Change 'YELLOW' to the color you prefer
+
+    # Ensure the last run in the paragraph has no trailing space
+    if paragraph.runs:
+        paragraph.runs[-1].text = paragraph.runs[-1].text.rstrip()
 
 
 def update_section_numbers(doc):
@@ -96,16 +109,16 @@ def update_section_numbers(doc):
 def handle_conditional_sections(doc, predmet, site_creator, edo):
     edo_text_1 = "(в том числе его получения с использованием системы электронного документооборота)" if edo == "YES" else ""
     edo_text_2 = (
-                "10.4. Стороны согласовали, что они вправе осуществлять документооборот в электронном виде по телекоммуникационным каналам связи с использованием усиленной квалификационной электронной подписи посредством системы электронного документооборота СБИС. " + "\n" +
-                "10.4.1. В целях настоящего договора под электронным документом понимается документ, созданный в электронной форме без предварительного документирования на бумажном носителе, подписанный электронной подписью в порядке, установленном законодательством Российской Федерации. Стороны признают электронные документы, заверенные электронной подпись, при соблюдении требований Федерального закона от 06.04.2011 № 63-ФЗ 'Об электронной подписи' юридически эквивалентным документам на бумажных носителях, заверенным соответствующими подписями и оттиском печатей Сторон. " + "\n" +
-                "10.5. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью." + "\n" +
-                " 10.6. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон. ") \
+            "10.4. Стороны согласовали, что они вправе осуществлять документооборот в электронном виде по телекоммуникационным каналам связи с использованием усиленной квалификационной электронной подписи посредством системы электронного документооборота СБИС. " + "\n" +
+            "10.4.1. В целях настоящего договора под электронным документом понимается документ, созданный в электронной форме без предварительного документирования на бумажном носителе, подписанный электронной подписью в порядке, установленном законодательством Российской Федерации. Стороны признают электронные документы, заверенные электронной подписью, при соблюдении требований Федерального закона от 06.04.2011 № 63-ФЗ 'Об электронной подписи' юридически эквивалентными документам на бумажных носителях, заверенным соответствующими подписями и оттиском печатей Сторон." + "\n" +
+            "10.5. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью." + "\n" +
+            " 10.6. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон. ") \
         if edo == "YES" else ""
     not_edo_text = "на почту Исполнителя" if edo == "NO" else ""
 
     write_by_hand = (
-                "10.4. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью. " + '\n' +
-                "10.5. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон.)") if edo == "NO" else ""
+            "10.4. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью. " + '\n' +
+            "10.5. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон.)") if edo == "NO" else ""
 
     replacements = {
         '{ARENDA_LINKS_1}': "",
@@ -126,7 +139,7 @@ def handle_conditional_sections(doc, predmet, site_creator, edo):
     if predmet == "ARENDA_LINKS":
         replacements.update({
             '{ARENDA_LINKS_1}': "1.1. Исполнитель обязуется по заданию Заказчика оказать услуги по адаптации и модификации веб-страниц сайтов своей площадки согласно техническому заданию, а Заказчик оплатить оказанные услуги.",
-            '{ARENDA_LINKS_2}': "1.3.1. Написание 3 (трёх) околотематические статей без ссылок;\n1.3.2. Написание статьи по теме Заказчика или приближенной к ней и проставление ссылки с площадки Исполнителя.",
+            '{ARENDA_LINKS_2}': "1.3.1. Написание 3 (трёх) околотематических статей без ссылок;\n1.3.2. Написание статьи по теме Заказчика или приближенной к ней и проставление ссылки с площадки Исполнителя.",
             '{ARENDA_LINKS_3}': "3.1. Стоимость аренды 1 (одной) ссылки на год на веб-сайтах площадки Исполнителя составляет 1 500 (тысяча пятьсот) рублей фиксированно. Количество ежемесячно закупаемых ссылок и суммарная оплата за них указана в Приложении №1 к Договору.",
             '{ARENDA_LINKS_4}': "4.1. Стороны признают целью Исполнителя – нахождение ссылок на страницы Интернет-сайта по необходимым анкорам на площадках Исполнителя. Анкоры и релевантные им страницы указаны в таблице в Приложении № 1 к Договору. Анкоры ссылок могут изменяться в рамках падежей, чисел, а также перестановкой слов и вставке до одного слова между словами или словосочетаниями.",
             '{ARENDA_LINKS_5}': ""})
@@ -171,7 +184,6 @@ def set_cell_formatting(cell, font_size=Pt(9), font_name='Calibri'):
             run.font.name = font_name
 
 
-
 def process_contract(request):
     if request.method == 'POST':
         contract_number = request.POST.get('contract_number')
@@ -199,7 +211,6 @@ def process_contract(request):
         template_path = os.path.join(os.path.dirname(__file__), '../dogovora', template_filename)
         doc = Document(template_path)
 
-
         handle_conditional_sections(doc, predmet, site_creation, edo)
         signature_image_path = os.path.join(os.path.dirname(__file__), '../dogovora/podpis.jpg')
 
@@ -214,14 +225,22 @@ def process_contract(request):
             for run in paragraph.runs:
                 run.font.name = 'Calibri'
                 run.font.size = Pt(9)
+
         paragraph = footer.paragraphs[0]
         paragraph.add_run("________________" + director_name + "").font.size = Pt(12)
         paragraph.add_run("                                                                           ").font.size = Pt(
             12)
-        run = paragraph.add_run()
-        run.add_picture(signature_image_path, width=Inches(1))  # Настройте ширину по необходимости
-        paragraph.add_run("Михайлов Д.С.").font.size = Pt(12)
-        remove_blank_line_between_points(doc)
+
+        if edo == "YES":
+            run = paragraph.add_run()
+            run.add_picture(signature_image_path, width=Inches(0.8))  # Настройте ширину по необходимости
+
+            paragraph.add_run("Михайлов Д.С.").font.size = Pt(12)
+            remove_blank_line_between_points(doc)
+        else:
+            paragraph.add_run("_______________Михайлов Д.С.").font.size = Pt(12)
+            remove_blank_line_between_points(doc)
+
         replacements = {
             '{DOGOVOR_NUMBER}': contract_number,
             '{DAY}': date_day,
@@ -252,6 +271,8 @@ def process_contract(request):
                         run.font.size = Pt(9)
                         if key == '{DOGOVOR_NUMBER}' or key == '{CUSTOMER_NAME}':
                             run.bold = True
+                    run.font.highlight_color = WD_COLOR_INDEX.YELLOW  # Change 'YELLOW' to the color you prefer
+
 
         for table in doc.tables:
             for row in table.rows:
@@ -265,6 +286,7 @@ def process_contract(request):
                                     run.font.size = Pt(9)
                                     if run.text.strip() == value:
                                         run.bold = True
+                                run.font.highlight_color = WD_COLOR_INDEX.YELLOW  # Change 'YELLOW' to the color you prefer
 
         for section in doc.sections:
             footer = section.footer
@@ -273,6 +295,7 @@ def process_contract(request):
                 for run in paragraph.runs:
                     run.font.name = 'Calibri'
                     run.font.size = Pt(9)
+                run.font.highlight_color = WD_COLOR_INDEX.YELLOW  # Change 'YELLOW' to the color you prefer
 
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
         response['Content-Disposition'] = 'attachment; filename="processed_contract.docx"'

@@ -2,11 +2,14 @@ import os
 from django.http import HttpResponse
 from django.shortcuts import render
 from docx import Document
+from docx.enum.text import WD_COLOR_INDEX
 from docx.shared import Pt, Inches
 
 
 def replace_paragraph_text_with_styles(paragraph, new_text):
-
+    """
+    Заменяет текст в абзаце, сохраняя исходное форматирование.
+    """
     if paragraph.runs:
         style = paragraph.runs[0].style
         font = paragraph.runs[0].font
@@ -19,24 +22,33 @@ def replace_paragraph_text_with_styles(paragraph, new_text):
         font_size = Pt(9)
 
     paragraph.clear()
-    run = paragraph.add_run(new_text)
-    run.bold = is_bold
-    run.font.name = font_name
-    run.font.size = font_size
+    for idx, word in enumerate(new_text.split()):
+        run = paragraph.add_run(word + " ")
+        run.bold = is_bold
+        run.font.name = font_name
+        run.font.size = font_size
+        if word.strip() in new_text:
+            # Highlight the replaced text with the specified color
+            run.font.highlight_color = WD_COLOR_INDEX.YELLOW  # Change 'YELLOW' to the color you prefer
+
+    # Ensure the last run in the paragraph has no trailing space
+    if paragraph.runs:
+        paragraph.runs[-1].text = paragraph.runs[-1].text.rstrip()
+
 
 def handle_conditional_sections(doc, edo):
     edo_text_1 = "(в том числе его получения с использованием системы электронного документооборота)" if edo == "YES" else ""
     edo_text_2 = (
-                "10.4. Стороны согласовали, что они вправе осуществлять документооборот в электронном виде по телекоммуникационным каналам связи с использованием усиленной квалификационной электронной подписи посредством системы электронного документооборота СБИС. " + "\n" +
-                "10.4.1. В целях настоящего договора под электронным документом понимается документ, созданный в электронной форме без предварительного документирования на бумажном носителе, подписанный электронной подписью в порядке, установленном законодательством Российской Федерации. Стороны признают электронные документы, заверенные электронной подпись, при соблюдении требований Федерального закона от 06.04.2011 № 63-ФЗ 'Об электронной подписи' юридически эквивалентным документам на бумажных носителях, заверенным соответствующими подписями и оттиском печатей Сторон. " + "\n" +
-                "10.5. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью." + "\n" +
-                " 10.6. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон. ") \
+            "10.4. Стороны согласовали, что они вправе осуществлять документооборот в электронном виде по телекоммуникационным каналам связи с использованием усиленной квалификационной электронной подписи посредством системы электронного документооборота СБИС. " + "\n" +
+            "10.4.1. В целях настоящего договора под электронным документом понимается документ, созданный в электронной форме без предварительного документирования на бумажном носителе, подписанный электронной подписью в порядке, установленном законодательством Российской Федерации. Стороны признают электронные документы, заверенные электронной подписью, при соблюдении требований Федерального закона от 06.04.2011 № 63-ФЗ 'Об электронной подписи' юридически эквивалентными документам на бумажных носителях, заверенным соответствующими подписями и оттиском печатей Сторон." + "\n" +
+            "10.5. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью." + "\n" +
+            " 10.6. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон. ") \
         if edo == "YES" else ""
     not_edo_text = "на почту Исполнителя" if edo == "NO" else ""
 
     write_by_hand = (
-                "10.4. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью. " + '\n' +
-                "10.5. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон.)") if edo == "NO" else ""
+            "10.4. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью. " + '\n' +
+            "10.5. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон.)") if edo == "NO" else ""
 
     replacements = {
         '{EDO_1}': edo_text_1,
@@ -45,12 +57,12 @@ def handle_conditional_sections(doc, edo):
         '{WRITE_BY_HAND}': write_by_hand
     }
 
-
     for paragraph in doc.paragraphs:
         for tag, replacement in replacements.items():
             if tag in paragraph.text:
                 paragraph_text = paragraph.text.replace(tag, replacement)
                 replace_paragraph_text_with_styles(paragraph, paragraph_text)
+
 
 def replace_tag_with_text(doc, tag, text=None):
     for paragraph in doc.paragraphs:
@@ -63,6 +75,7 @@ def replace_tag_with_text(doc, tag, text=None):
                 p = paragraph._element
                 p.getparent().remove(p)
                 p._p = p._element = None
+
 
 def process_contract(request):
     if request.method == 'POST':
@@ -90,7 +103,6 @@ def process_contract(request):
         bic = request.POST.get('bic')
         edo = request.POST.get('edo')
 
-
         template_filename = 'Договор ПФ метки.docx'
         template_path = os.path.join(os.path.dirname(__file__), '../dogovora', template_filename)
         doc = Document(template_path)
@@ -108,9 +120,13 @@ def process_contract(request):
         paragraph.add_run("________________" + director_name + "").font.size = Pt(12)
         paragraph.add_run("                                                                           ").font.size = Pt(
             12)
-        run = paragraph.add_run()
-        run.add_picture(signature_image_path, width=Inches(1))  # Настройте ширину по необходимости
-        paragraph.add_run("Михайлов Д.С.").font.size = Pt(12)
+
+        if edo == "YES":
+            run = paragraph.add_run()
+            run.add_picture(signature_image_path, width=Inches(0.8))  # Настройте ширину по необходимости
+            paragraph.add_run("Михайлов Д.С.").font.size = Pt(12)
+        else:
+            paragraph.add_run("_______________Михайлов Д.С.").font.size = Pt(12)
 
         replacements = {
             '{DOGOVOR_NUMBER}': contract_number,
@@ -146,6 +162,7 @@ def process_contract(request):
                         run.font.size = Pt(9)
                         if key == '{DOGOVOR_NUMBER}' or key == '{CUSTOMER_NAME}':
                             run.bold = True
+                    run.font.highlight_color = WD_COLOR_INDEX.YELLOW  # Change 'YELLOW' to the color you prefer
 
         for table in doc.tables:
             for row in table.rows:
@@ -159,6 +176,7 @@ def process_contract(request):
                                     run.font.size = Pt(9)
                                     if run.text.strip() == value:
                                         run.bold = True
+                                run.font.highlight_color = WD_COLOR_INDEX.YELLOW  # Change 'YELLOW' to the color you prefer
 
         for section in doc.sections:
             footer = section.footer
@@ -167,6 +185,7 @@ def process_contract(request):
                 for run in paragraph.runs:
                     run.font.name = 'Calibri'
                     run.font.size = Pt(9)
+                run.font.highlight_color = WD_COLOR_INDEX.YELLOW  # Change 'YELLOW' to the color you prefer
 
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
         response['Content-Disposition'] = 'attachment; filename="processed_contract.docx"'

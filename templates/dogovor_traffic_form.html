@@ -86,18 +86,18 @@
     </select>
     <label for="month">Месяц:</label>
     <select id="month" name="date_month" onchange="updateDays()" required>
-        <option value="Январь">Январь</option>
-        <option value="Февраль">Февраль</option>
-        <option value="Март">Март</option>
-        <option value="Апрель">Апрель</option>
-        <option value="Май">Май</option>
-        <option value="Июнь">Июнь</option>
-        <option value="Июль">Июль</option>
-        <option value="Август">Август</option>
-        <option value="Сентябрь">Сентябрь</option>
-        <option value="Октябрь">Октябрь</option>
-        <option value="Ноябрь">Ноябрь</option>
-        <option value="Декабрь">Декабрь</option>
+        <option value="января">Январь</option>
+        <option value="февраля">Февраль</option>
+        <option value="марта">Март</option>
+        <option value="апреля">Апрель</option>
+        <option value="мая">Май</option>
+        <option value="июня">Июнь</option>
+        <option value="июля">Июль</option>
+        <option value="августа">Август</option>
+        <option value="сентября">Сентябрь</option>
+        <option value="октября">Октябрь</option>
+        <option value="ноября">Ноябрь</option>
+        <option value="декабря">Декабрь</option>
     </select>
     <label for="year">Год:</label>
     <select id="year" name="date_year" onchange="updateDays()">
@@ -223,30 +223,6 @@
         <label for="creating_pages3">- Не вставлять;</label><br><br>
     </div>
     <br>
-
-
-    <script>
-        document.getElementById('myForm').addEventListener('submit', function (e) {
-            var analyticsChecked = document.querySelector('input[name="analitic_system"]:checked');
-            var dataAnalyticsChecked = document.querySelector('input[name="analitic_system_user"]:checked');
-            var searchSystemChecked = document.querySelector('input[name="search_system"]:checked');
-
-            // Проверяем, выбран ли хотя бы один чекбокс в каждой группе
-            if (!analyticsChecked || !dataAnalyticsChecked || !searchSystemChecked) {
-                alert('Пожалуйста, выберите хотя бы один вариант в каждой группе.');
-
-                // Добавляем подсветку для каждой группы без выбранных чекбоксов
-                if (!analyticsChecked) {
-                    document.querySelector('input[name="analitic_system"]').parentNode.style.border = '1px solid #ff0000';
-                }
-                if (!dataAnalyticsChecked) {
-                    document.querySelector('input[name="analitic_system_user"]').parentNode.style.border = '1px solid #ff0000';
-                }
-
-                e.preventDefault(); // предотвратить отправку формы
-            }
-        });
-    </script>
     <script type="text/javascript">    // Проверка наличия хотя бы одного выбранного чекбокса при отправке формы
     document.addEventListener("DOMContentLoaded", function () {
         document.querySelector('form').addEventListener('submit', function (event) {

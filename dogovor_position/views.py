@@ -2,11 +2,15 @@ import os
 from django.http import HttpResponse
 from django.shortcuts import render
 from docx import Document
+from docx.enum.text import WD_COLOR_INDEX
 from docx.shared import Pt, Inches
 from num2words import num2words
 
 
 def replace_paragraph_text_with_styles(paragraph, new_text):
+    """
+    Заменяет текст в абзаце, сохраняя исходное форматирование.
+    """
     if paragraph.runs:
         style = paragraph.runs[0].style
         font = paragraph.runs[0].font
@@ -19,10 +23,18 @@ def replace_paragraph_text_with_styles(paragraph, new_text):
         font_size = Pt(9)
 
     paragraph.clear()
-    run = paragraph.add_run(new_text)
-    run.bold = is_bold
-    run.font.name = font_name
-    run.font.size = font_size
+    for idx, word in enumerate(new_text.split()):
+        run = paragraph.add_run(word + " ")
+        run.bold = is_bold
+        run.font.name = font_name
+        run.font.size = font_size
+        if word.strip() in new_text:
+            # Highlight the replaced text with the specified color
+            run.font.highlight_color = WD_COLOR_INDEX.YELLOW  # Change 'YELLOW' to the color you prefer
+
+    # Ensure the last run in the paragraph has no trailing space
+    if paragraph.runs:
+        paragraph.runs[-1].text = paragraph.runs[-1].text.rstrip()
 
 
 def handle_additional_work_sections(doc, selected_services, platform_choice):
@@ -62,18 +74,16 @@ def handle_additional_work_sections(doc, selected_services, platform_choice):
 
 
 def calculate_and_replace_tags_10(doc, request):
-    has_semantics = request.POST.get('has_semantics')
-    if has_semantics == 'yes':
-        req_count_top10 = int(request.POST.get('req_count_top10'))
+    req_count_top10 = request.POST.get('req_count_top10')
+    if req_count_top10:
+        req_count_top10 = int(req_count_top10)
         region_name = request.POST.get('region_name')
         search_engine = request.POST.get('search_engine')
 
-        # Получаем стоимость запросов для Google, если выбраны Google или Яндекс и Google
         google_req_cost = 0
         if search_engine in ['GOOGLE', 'YANDEX_GOOGLE']:
             google_req_cost = int(request.POST.get('google_req_cost'))
 
-        # Получаем стоимость запросов в зависимости от региона
         if region_name == 'Мск':
             req_pay = int(request.POST.get('req_count_top10_msk'))
         elif region_name == 'СПб':
@@ -81,10 +91,8 @@ def calculate_and_replace_tags_10(doc, request):
         else:
             req_pay = int(request.POST.get('req_count_top10_other'))
 
-        # Добавляем стоимость запросов для Google, если применимо
         req_pay += google_req_cost
 
-        # Заменяем теги в документе
         replace_tag_with_text(doc, '{REQ_PAY_10}', str(req_pay))
         replace_tag_with_text(doc, '{REQ_PAY_WORDS_10}', num2words(req_pay, lang='ru'))
 
@@ -95,8 +103,8 @@ def calculate_and_replace_tags_10(doc, request):
             prem_value = int(total_premium * percent)
             replace_tag_with_text(doc, tag, str(prem_value))
     else:
-        # Если семантика отсутствует, заменяем теги на пустые строки
         replace_tag_with_text(doc, '{REQ_PAY_10}', "__________")
+        replace_tag_with_text(doc, '{REQ_COUNT_TOP10}', "__________")
         replace_tag_with_text(doc, '{REQ_PAY_WORDS_10}', "__________")
         for i in range(10, 101, 10):
             tag = '{PREM_TOP10_' + str(i) + '}'
@@ -104,18 +112,16 @@ def calculate_and_replace_tags_10(doc, request):
 
 
 def calculate_and_replace_tags_5(doc, request):
-    has_semantics = request.POST.get('has_semantics')
-    if has_semantics == 'yes':
-        req_count_top5 = int(request.POST.get('req_count_top5'))
+    req_count_top5 = request.POST.get('req_count_top5')
+    if req_count_top5:
+        req_count_top5 = int(req_count_top5)
         region_name = request.POST.get('region_name')
         search_engine = request.POST.get('search_engine')
 
-        # Получаем стоимость запросов для Google, если выбраны Google или Яндекс и Google
         google_req_cost = 0
         if search_engine in ['GOOGLE', 'YANDEX_GOOGLE']:
             google_req_cost = int(request.POST.get('google_req_cost'))
 
-        # Получаем стоимость запросов в зависимости от региона
         if region_name == 'Мск':
             req_pay = int(request.POST.get('req_count_top5_msk'))
         elif region_name == 'СПб':
@@ -123,10 +129,8 @@ def calculate_and_replace_tags_5(doc, request):
         else:
             req_pay = int(request.POST.get('req_count_top5_other'))
 
-        # Добавляем стоимость запросов для Google, если применимо
         req_pay += google_req_cost
 
-        # Заменяем теги в документе
         replace_tag_with_text(doc, '{REQ_PAY_5}', str(req_pay))
         replace_tag_with_text(doc, '{REQ_PAY_WORDS_5}', num2words(req_pay, lang='ru'))
 
@@ -137,8 +141,8 @@ def calculate_and_replace_tags_5(doc, request):
             prem_value = int(total_premium * percent)
             replace_tag_with_text(doc, tag, str(prem_value))
     else:
-        # Если семантика отсутствует, заменяем теги на пустые строки
         replace_tag_with_text(doc, '{REQ_PAY_5}', "__________")
+        replace_tag_with_text(doc, '{REQ_COUNT_TOP5}', "__________")
         replace_tag_with_text(doc, '{REQ_PAY_WORDS_5}', "__________")
         for i in range(10, 101, 10):
             tag = '{PREM_TOP5_' + str(i) + '}'
@@ -146,18 +150,16 @@ def calculate_and_replace_tags_5(doc, request):
 
 
 def calculate_and_replace_tags_3(doc, request):
-    has_semantics = request.POST.get('has_semantics')
-    if has_semantics == 'yes':
-        req_count_top3 = int(request.POST.get('req_count_top3'))
+    req_count_top3 = request.POST.get('req_count_top3')
+    if req_count_top3:
+        req_count_top3 = int(req_count_top3)
         region_name = request.POST.get('region_name')
         search_engine = request.POST.get('search_engine')
 
-        # Получаем стоимость запросов для Google, если выбраны Google или Яндекс и Google
         google_req_cost = 0
         if search_engine in ['GOOGLE', 'YANDEX_GOOGLE']:
             google_req_cost = int(request.POST.get('google_req_cost'))
 
-        # Получаем стоимость запросов в зависимости от региона
         if region_name == 'Мск':
             req_pay = int(request.POST.get('req_count_top3_msk'))
         elif region_name == 'СПб':
@@ -165,10 +167,8 @@ def calculate_and_replace_tags_3(doc, request):
         else:
             req_pay = int(request.POST.get('req_count_top3_other'))
 
-        # Добавляем стоимость запросов для Google, если применимо
         req_pay += google_req_cost
 
-        # Заменяем теги в документе
         replace_tag_with_text(doc, '{REQ_PAY_3}', str(req_pay))
         replace_tag_with_text(doc, '{REQ_PAY_WORDS_3}', num2words(req_pay, lang='ru'))
 
@@ -179,8 +179,8 @@ def calculate_and_replace_tags_3(doc, request):
             prem_value = int(total_premium * percent)
             replace_tag_with_text(doc, tag, str(prem_value))
     else:
-        # Если семантика отсутствует, заменяем теги на пустые строки
         replace_tag_with_text(doc, '{REQ_PAY_3}', "__________")
+        replace_tag_with_text(doc, '{REQ_COUNT_TOP3}', "__________")
         replace_tag_with_text(doc, '{REQ_PAY_WORDS_3}', "__________")
         for i in range(10, 101, 10):
             tag = '{PREM_TOP3_' + str(i) + '}'
@@ -191,7 +191,7 @@ def handle_conditional_sections(doc, edo):
     edo_text_1 = "(в том числе его получения с использованием системы электронного документооборота)" if edo == "YES" else ""
     edo_text_2 = (
             "10.4. Стороны согласовали, что они вправе осуществлять документооборот в электронном виде по телекоммуникационным каналам связи с использованием усиленной квалификационной электронной подписи посредством системы электронного документооборота СБИС. " + "\n" +
-            "10.4.1. В целях настоящего договора под электронным документом понимается документ, созданный в электронной форме без предварительного документирования на бумажном носителе, подписанный электронной подписью в порядке, установленном законодательством Российской Федерации. Стороны признают электронные документы, заверенные электронной подпись, при соблюдении требований Федерального закона от 06.04.2011 № 63-ФЗ 'Об электронной подписи' юридически эквивалентным документам на бумажных носителях, заверенным соответствующими подписями и оттиском печатей Сторон. " + "\n" +
+            "10.4.1. В целях настоящего договора под электронным документом понимается документ, созданный в электронной форме без предварительного документирования на бумажном носителе, подписанный электронной подписью в порядке, установленном законодательством Российской Федерации. Стороны признают электронные документы, заверенные электронной подписью, при соблюдении требований Федерального закона от 06.04.2011 № 63-ФЗ 'Об электронной подписи' юридически эквивалентными документам на бумажных носителях, заверенным соответствующими подписями и оттиском печатей Сторон." + "\n" +
             "10.5. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью." + "\n" +
             " 10.6. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон. ") \
         if edo == "YES" else ""
@@ -368,9 +368,13 @@ def process_contract(request):
         paragraph.add_run("________________" + director_name + "").font.size = Pt(12)
         paragraph.add_run("                                                                           ").font.size = Pt(
             12)
-        run = paragraph.add_run()
-        run.add_picture(signature_image_path, width=Inches(1))  # Настройте ширину по необходимости
-        paragraph.add_run("Михайлов Д.С.").font.size = Pt(12)
+
+        if edo == "YES":
+            run = paragraph.add_run()
+            run.add_picture(signature_image_path, width=Inches(0.8))  # Настройте ширину по необходимости
+            paragraph.add_run("Михайлов Д.С.").font.size = Pt(12)
+        else:
+            paragraph.add_run("_______________Михайлов Д.С.").font.size = Pt(12)
 
         replacements = {
             '{DOGOVOR_NUMBER}': contract_number,
@@ -411,6 +415,7 @@ def process_contract(request):
                         run.font.size = Pt(9)
                         if key == '{DOGOVOR_NUMBER}' or key == '{CUSTOMER_NAME}':
                             run.bold = True
+                    run.font.highlight_color = WD_COLOR_INDEX.YELLOW  # Change 'YELLOW' to the color you prefer
 
         for table in doc.tables:
             for row in table.rows:
@@ -424,6 +429,7 @@ def process_contract(request):
                                     run.font.size = Pt(9)
                                     if run.text.strip() == value:
                                         run.bold = True
+                                run.font.highlight_color = WD_COLOR_INDEX.YELLOW  # Change 'YELLOW' to the color you prefer
 
         for section in doc.sections:
             footer = section.footer
@@ -432,6 +438,7 @@ def process_contract(request):
                 for run in paragraph.runs:
                     run.font.name = 'Calibri'
                     run.font.size = Pt(9)
+                run.font.highlight_color = WD_COLOR_INDEX.YELLOW  # Change 'YELLOW' to the color you prefer
 
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
         response['Content-Disposition'] = 'attachment; filename="processed_contract.docx"'

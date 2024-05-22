@@ -118,18 +118,18 @@
     </select>
     <label for="month">Месяц:</label>
     <select id="month" name="date_month" onchange="updateDays()" required>
-        <option value="Январь">Январь</option>
-        <option value="Февраль">Февраль</option>
-        <option value="Март">Март</option>
-        <option value="Апрель">Апрель</option>
-        <option value="Май">Май</option>
-        <option value="Июнь">Июнь</option>
-        <option value="Июль">Июль</option>
-        <option value="Август">Август</option>
-        <option value="Сентябрь">Сентябрь</option>
-        <option value="Октябрь">Октябрь</option>
-        <option value="Ноябрь">Ноябрь</option>
-        <option value="Декабрь">Декабрь</option>
+        <option value="января">Январь</option>
+        <option value="февраля">Февраль</option>
+        <option value="марта">Март</option>
+        <option value="апреля">Апрель</option>
+        <option value="мая">Май</option>
+        <option value="июня">Июнь</option>
+        <option value="июля">Июль</option>
+        <option value="августа">Август</option>
+        <option value="сентября">Сентябрь</option>
+        <option value="октября">Октябрь</option>
+        <option value="ноября">Ноябрь</option>
+        <option value="декабря">Декабрь</option>
     </select>
     <label for="year">Год:</label>
     <select id="year" name="date_year" onchange="updateDays()">
@@ -293,7 +293,7 @@
             divContainers.forEach(div => {
                 const containerId = div.classList[0]; // Получаем класс контейнера
                 if (!excludedContainers.includes(containerId)) {
-                    const checkboxes = div.querySelectorAll('input[type="checkbox"]');
+                    const checkboxes = div.querySelectorAll('input[type="checkbox"]:not(#toggle_top10):not(#toggle_top5):not(#toggle_top3)');
                     let atLeastOneChecked = false;
                     let atLeastOneEnabled = false;
 
@@ -426,11 +426,26 @@
     </select><br><br>
 
     <div id="semantics_fields" style="display: none;">
+        <div>
+            <input type="checkbox" id="toggle_top10" name="toggle_top10" onchange="toggleTopFields()">
+            <label for="toggle_top10">ТОП10</label><br>
+            <input type="checkbox" id="toggle_top5" name="toggle_top5" onchange="toggleTopFields()">
+            <label for="toggle_top5">ТОП5</label><br>
+            <input type="checkbox" id="toggle_top3" name="toggle_top3" onchange="toggleTopFields()">
+            <label for="toggle_top3">ТОП3</label><br><br>
+        </div>
+
         <div id="req_count_top10_msk_container" style="display:none;">
             <label for="req_count_top10_msk">Стоимость запросов для ТОП10 в Мск:</label>
             <input type="number" step="1" id="req_count_top10_msk" name="req_count_top10_msk"><br><br>
+        </div>
+
+        <div id="req_count_top5_msk_container" style="display:none;">
             <label for="req_count_top5_msk">Стоимость запросов для ТОП5 в Мск:</label>
             <input type="number" step="1" id="req_count_top5_msk" name="req_count_top5_msk"><br><br>
+        </div>
+
+        <div id="req_count_top3_msk_container" style="display:none;">
             <label for="req_count_top3_msk">Стоимость запросов для ТОП3 в Мск:</label>
             <input type="number" step="1" id="req_count_top3_msk" name="req_count_top3_msk"><br><br>
         </div>
@@ -438,8 +453,14 @@
         <div id="req_count_top10_spb_container" style="display:none;">
             <label for="req_count_top10_spb">Стоимость запросов для ТОП10 в СПб:</label>
             <input type="number" step="1" id="req_count_top10_spb" name="req_count_top10_spb"><br><br>
+        </div>
+
+        <div id="req_count_top5_spb_container" style="display:none;">
             <label for="req_count_top5_spb">Стоимость запросов для ТОП5 в СПб:</label>
             <input type="number" step="1" id="req_count_top5_spb" name="req_count_top5_spb"><br><br>
+        </div>
+
+        <div id="req_count_top3_spb_container" style="display:none;">
             <label for="req_count_top3_spb">Стоимость запросов для ТОП3 в СПб:</label>
             <input type="number" step="1" id="req_count_top3_spb" name="req_count_top3_spb"><br><br>
         </div>
@@ -447,8 +468,14 @@
         <div id="req_count_top10_other_container" style="display:none;">
             <label for="req_count_top10_other">Стоимость запросов для ТОП10 в другом регионе:</label>
             <input type="number" step="1" id="req_count_top10_other" name="req_count_top10_other"><br><br>
+        </div>
+
+        <div id="req_count_top5_other_container" style="display:none;">
             <label for="req_count_top5_other">Стоимость запросов для ТОП5 в другом регионе:</label>
             <input type="number" step="1" id="req_count_top5_other" name="req_count_top5_other"><br><br>
+        </div>
+
+        <div id="req_count_top3_other_container" style="display:none;">
             <label for="req_count_top3_other">Стоимость запросов для ТОП3 в другом регионе:</label>
             <input type="number" step="1" id="req_count_top3_other" name="req_count_top3_other"><br><br>
         </div>
@@ -458,14 +485,17 @@
             <input type="number" step="1" id="google_req_cost" name="google_req_cost"><br><br>
         </div>
 
-        <label for="req_count_top10">Количество запросов для ТОП10:</label>
-        <input type="number" step="1" id="req_count_top10" name="req_count_top10"><br><br>
+        <label for="req_count_top10" id="label_req_count_top10" style="display:none;">Количество запросов для
+            ТОП10:</label>
+        <input type="number" step="1" id="req_count_top10" name="req_count_top10" style="display:none;"><br><br>
 
-        <label for="req_count_top5">Количество запросов для ТОП5:</label>
-        <input type="number" step="1" id="req_count_top5" name="req_count_top5"><br><br>
+        <label for="req_count_top5" id="label_req_count_top5" style="display:none;">Количество запросов для
+            ТОП5:</label>
+        <input type="number" step="1" id="req_count_top5" name="req_count_top5" style="display:none;"><br><br>
 
-        <label for="req_count_top3">Количество запросов для ТОП3:</label>
-        <input type="number" step="1" id="req_count_top3" name="req_count_top3"><br><br>
+        <label for="req_count_top3" id="label_req_count_top3" style="display:none;">Количество запросов для
+            ТОП3:</label>
+        <input type="number" step="1" id="req_count_top3" name="req_count_top3" style="display:none;"><br><br>
 
         <label for="topvisor">Ссылка на проверку позиций в онлайн-сервисе Топвизор:</label>
         <input type="text" id="topvisor" name="topvisor"><br><br>
@@ -477,12 +507,14 @@
             const googleReqCostContainer = document.getElementById('google_req_cost_container');
             const searchEngine = document.getElementById('search_engine').value;
             const hasSemantics = document.getElementById('has_semantics').value;
+
             if (hasSemantics === 'yes') {
                 semanticsFields.style.display = 'block';
                 toggleRegionFields();
             } else {
                 semanticsFields.style.display = 'none';
             }
+
             if (searchEngine === 'GOOGLE' || searchEngine === 'YANDEX_GOOGLE') {
                 googleReqCostContainer.style.display = 'block';
             } else {
@@ -492,44 +524,99 @@
 
         function toggleRegionFields() {
             const region = document.getElementById('region_name').value;
-            const reqCountTop10MskContainer = document.getElementById('req_count_top10_msk_container');
-            const reqCountTop10SpbContainer = document.getElementById('req_count_top10_spb_container');
-            const reqCountTop10OtherContainer = document.getElementById('req_count_top10_other_container');
-            const reqCountTop5Msk = document.getElementById('req_count_top5_msk');
-            const reqCountTop3Msk = document.getElementById('req_count_top3_msk');
-            const reqCountTop5Spb = document.getElementById('req_count_top5_spb');
-            const reqCountTop3Spb = document.getElementById('req_count_top3_spb');
-            const reqCountTop5Other = document.getElementById('req_count_top5_other');
-            const reqCountTop3Other = document.getElementById('req_count_top3_other');
+            const top10Checked = document.getElementById('toggle_top10').checked;
+            const top5Checked = document.getElementById('toggle_top5').checked;
+            const top3Checked = document.getElementById('toggle_top3').checked;
 
-            reqCountTop10MskContainer.style.display = 'none';
-            reqCountTop10SpbContainer.style.display = 'none';
-            reqCountTop10OtherContainer.style.display = 'none';
+            // Helper function to toggle visibility
+            const toggleVisibility = (elementId, condition) => {
+                const element = document.getElementById(elementId);
+                if (condition) {
+                    element.style.display = 'block';
+                } else {
+                    element.style.display = 'none';
+                    // Reset field value to empty when checkbox is unchecked
+                    if (element.tagName === 'INPUT') {
+                        element.value = '';
+                    }
+                }
+            }
 
-            reqCountTop5Msk.style.display = 'none';
-            reqCountTop3Msk.style.display = 'none';
-            reqCountTop5Spb.style.display = 'none';
-            reqCountTop3Spb.style.display = 'none';
-            reqCountTop5Other.style.display = 'none';
-            reqCountTop3Other.style.display = 'none';
+            // Reset all fields to hidden and empty value
+            ['msk', 'spb', 'other'].forEach(regionKey => {
+                [10, 5, 3].forEach(top => {
+                    toggleVisibility(`req_count_top${top}_${regionKey}_container`, false);
+                    document.getElementById(`req_count_top${top}_${regionKey}`).value = '';
+                });
+            });
 
             if (region === 'Мск') {
-                reqCountTop10MskContainer.style.display = 'block';
-                reqCountTop5Msk.style.display = 'block';
-                reqCountTop3Msk.style.display = 'block';
+                toggleVisibility('req_count_top10_msk_container', top10Checked);
+                toggleVisibility('req_count_top5_msk_container', top5Checked);
+                toggleVisibility('req_count_top3_msk_container', top3Checked);
             } else if (region === 'СПб') {
-                reqCountTop10SpbContainer.style.display = 'block';
-                reqCountTop5Spb.style.display = 'block';
-                reqCountTop3Spb.style.display = 'block';
+                toggleVisibility('req_count_top10_spb_container', top10Checked);
+                toggleVisibility('req_count_top5_spb_container', top5Checked);
+                toggleVisibility('req_count_top3_spb_container', top3Checked);
             } else {
-                reqCountTop10OtherContainer.style.display = 'block';
-                reqCountTop5Other.style.display = 'block';
-                reqCountTop3Other.style.display = 'block';
+                toggleVisibility('req_count_top10_other_container', top10Checked);
+                toggleVisibility('req_count_top5_other_container', top5Checked);
+                toggleVisibility('req_count_top3_other_container', top3Checked);
+            }
+
+            toggleVisibility('label_req_count_top10', top10Checked);
+            toggleVisibility('req_count_top10', top10Checked);
+
+            toggleVisibility('label_req_count_top5', top5Checked);
+            toggleVisibility('req_count_top5', top5Checked);
+
+            toggleVisibility('label_req_count_top3', top3Checked);
+            toggleVisibility('req_count_top3', top3Checked);
+        }
+
+
+        function toggleTopFields() {
+            toggleRegionFields();
+        }
+
+        function validateForm(event) {
+            const hasSemantics = document.getElementById('has_semantics').value;
+            const top10Checked = document.getElementById('toggle_top10').checked;
+            const top5Checked = document.getElementById('toggle_top5').checked;
+            const top3Checked = document.getElementById('toggle_top3').checked;
+
+            if (hasSemantics === 'yes' && !top10Checked && !top5Checked && !top3Checked) {
+                alert('Выберите хотя бы один чекбокс для топов');
+                event.preventDefault();
+                return;
+            }
+
+            const region = document.getElementById('region_name').value;
+
+            const setDefaultValues = (top, checked, regionKey) => {
+                if (!checked) {
+                    document.getElementById(`req_count_top${top}_${regionKey}`).value = '__________';
+                }
+            }
+
+            if (region === 'Мск') {
+                setDefaultValues(10, top10Checked, 'msk');
+                setDefaultValues(5, top5Checked, 'msk');
+                setDefaultValues(3, top3Checked, 'msk');
+            } else if (region === 'СПб') {
+                setDefaultValues(10, top10Checked, 'spb');
+                setDefaultValues(5, top5Checked, 'spb');
+                setDefaultValues(3, top3Checked, 'spb');
+            } else {
+                setDefaultValues(10, top10Checked, 'other');
+                setDefaultValues(5, top5Checked, 'other');
+                setDefaultValues(3, top3Checked, 'other');
             }
         }
 
-        // Вызываем toggleRegionFields() при изменении выбранного региона
         document.getElementById('region_name').addEventListener('change', toggleRegionFields);
+        document.getElementById('has_semantics').addEventListener('change', toggleSemanticsFields);
+        document.querySelector('form').addEventListener('submit', validateForm);
     </script>
 
     <input type="submit" value="Скачать договор">
@@ -544,7 +631,7 @@
         // Для каждого div-контейнера
         divContainers.forEach(div => {
             // Получаем все чекбоксы в текущем контейнере
-            const checkboxes = div.querySelectorAll('input[type="checkbox"]');
+            const checkboxes = div.querySelectorAll('input[type="checkbox"]:not(#toggle_top10):not(#toggle_top5):not(#toggle_top3)');
 
             // Добавляем обработчик события change
             checkboxes.forEach(checkbox => {
