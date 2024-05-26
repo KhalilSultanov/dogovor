@@ -22,20 +22,10 @@ def replace_paragraph_text_with_styles(paragraph, new_text):
         font_size = Pt(9)
 
     paragraph.clear()
-    for idx, word in enumerate(new_text.split()):
-        run = paragraph.add_run(word + " ")
-        run.bold = is_bold
-        run.font.name = font_name
-        run.font.size = font_size
-        if word.strip() in new_text:
-            # Highlight the replaced text with the specified color
-            run.font.highlight_color = WD_COLOR_INDEX.YELLOW  # Change 'YELLOW' to the color you prefer
-
-    # Ensure the last run in the paragraph has no trailing space
-    if paragraph.runs:
-        paragraph.runs[-1].text = paragraph.runs[-1].text.rstrip()
-
-
+    run = paragraph.add_run(new_text)
+    run.bold = is_bold
+    run.font.name = font_name
+    run.font.size = font_size
 def replace_analytics_tags(doc, analitic_system, analitic_system_user, system_search):
     # Замена для "Яндекс.Вебмастер" и "Search Console"
     if 'yandex_web' in analitic_system:
@@ -286,7 +276,6 @@ def process_contract(request):
                         run.font.size = Pt(9)
                         if key == '{DOGOVOR_NUMBER}' or key == '{CUSTOMER_NAME}':
                             run.bold = True
-                    run.font.highlight_color = WD_COLOR_INDEX.YELLOW  # Change 'YELLOW' to the color you prefer
 
         for table in doc.tables:
             for row in table.rows:
@@ -300,7 +289,6 @@ def process_contract(request):
                                     run.font.size = Pt(9)
                                     if run.text.strip() == value:
                                         run.bold = True
-                                run.font.highlight_color = WD_COLOR_INDEX.YELLOW  # Change 'YELLOW' to the color you prefer
 
 
         for section in doc.sections:
@@ -310,7 +298,6 @@ def process_contract(request):
                 for run in paragraph.runs:
                     run.font.name = 'Calibri'
                     run.font.size = Pt(9)
-                run.font.highlight_color = WD_COLOR_INDEX.YELLOW  # Change 'YELLOW' to the color you prefer
 
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
         response['Content-Disposition'] = 'attachment; filename="processed_contract.docx"'

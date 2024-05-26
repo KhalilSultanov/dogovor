@@ -24,6 +24,18 @@ def remove_blank_line_between_points(doc, point1="3.1.", point2="3.2."):
                 break
 
 
+def remove_blank_line_between_points_2(doc, point1="1.1.", point2="1.2."):
+    paragraphs = list(doc.paragraphs)
+    for idx, paragraph in enumerate(paragraphs):
+        if point1 in paragraph.text and idx + 2 < len(paragraphs):
+            next_paragraph_text = paragraphs[idx + 1].text.strip()
+            following_paragraph_text = paragraphs[idx + 2].text.strip()
+
+            if next_paragraph_text == "" and point2 in following_paragraph_text:
+                remove_paragraph(paragraphs[idx + 1])
+                break
+
+
 def adjust_paragraph_spacing(doc):
     paragraphs = list(doc.paragraphs)
     for idx, paragraph in enumerate(paragraphs):
@@ -82,18 +94,10 @@ def replace_paragraph_text_with_styles(paragraph, new_text):
         font_size = Pt(9)
 
     paragraph.clear()
-    for idx, word in enumerate(new_text.split()):
-        run = paragraph.add_run(word + " ")
-        run.bold = is_bold
-        run.font.name = font_name
-        run.font.size = font_size
-        if word.strip() in new_text:
-            # Highlight the replaced text with the specified color
-            run.font.highlight_color = WD_COLOR_INDEX.YELLOW  # Change 'YELLOW' to the color you prefer
-
-    # Ensure the last run in the paragraph has no trailing space
-    if paragraph.runs:
-        paragraph.runs[-1].text = paragraph.runs[-1].text.rstrip()
+    run = paragraph.add_run(new_text)
+    run.bold = is_bold
+    run.font.name = font_name
+    run.font.size = font_size
 
 
 def update_section_numbers(doc):
@@ -110,8 +114,8 @@ def handle_conditional_sections(doc, predmet, site_creator, edo):
     edo_text_1 = "(в том числе его получения с использованием системы электронного документооборота)" if edo == "YES" else ""
     edo_text_2 = (
             "10.4. Стороны согласовали, что они вправе осуществлять документооборот в электронном виде по телекоммуникационным каналам связи с использованием усиленной квалификационной электронной подписи посредством системы электронного документооборота СБИС. " + "\n" +
-            "10.4.1. В целях настоящего договора под электронным документом понимается документ, созданный в электронной форме без предварительного документирования на бумажном носителе, подписанный электронной подписью в порядке, установленном законодательством Российской Федерации. Стороны признают электронные документы, заверенные электронной подписью, при соблюдении требований Федерального закона от 06.04.2011 № 63-ФЗ 'Об электронной подписи' юридически эквивалентными документам на бумажных носителях, заверенным соответствующими подписями и оттиском печатей Сторон." + "\n" +
-            "10.5. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью." + "\n" +
+            "10.4.1. В целях настоящего договора под электронным документом понимается документ, созданный в электронной форме без предварительного документирования на бумажном носителе, подписанный электронной подписью в порядке, установленном законодательством Российской Федерации. Стороны признают электронные документы, заверенные электронной подписью, при соблюдении требований Федерального закона от 06.04.2011 № 63-ФЗ 'Об электронной подписи' юридически эквивалентными документам на бумажных носителях, заверенным соответствующими подписями и оттиском печатей Сторон. " + "\n" +
+            "10.5. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью. " + "\n" +
             " 10.6. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон. ") \
         if edo == "YES" else ""
     not_edo_text = "на почту Исполнителя" if edo == "NO" else ""
@@ -174,6 +178,16 @@ def set_cell_borders(cell):
         tcPr.append(element)
 
 
+def replace_placeholder_with_image(doc, placeholder, image_path):
+    for paragraph in doc.paragraphs:
+        if placeholder in paragraph.text:
+            for run in paragraph.runs:
+                if placeholder in run.text:
+                    run.clear()
+                    run.add_picture(image_path, width=Inches(0.8))
+                    break
+
+
 def set_cell_formatting(cell, font_size=Pt(9), font_name='Calibri'):
     """ Apply formatting to cell text. """
     cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
@@ -182,6 +196,64 @@ def set_cell_formatting(cell, font_size=Pt(9), font_name='Calibri'):
         for run in paragraph.runs:
             run.font.size = font_size
             run.font.name = font_name
+
+
+
+def replace_underscores_with_signature(doc, placeholder_text, signature_path):
+    def replace_in_paragraph(paragraph):
+        runs = paragraph.runs
+        full_text = ''.join(run.text for run in runs)
+        if placeholder_text in full_text:
+            split_text = full_text.split(placeholder_text)
+            # Clear existing runs
+            for run in runs:
+                run.text = ""
+            # Add new runs with the signature and styled text
+            paragraph.add_run(split_text[0])
+            paragraph.add_run().add_picture(signature_path, width=Inches(0.8))
+            run = paragraph.add_run("Михайлов Д.С.")
+            run.font.name = 'Calibri'
+            run.font.size = Pt(9)
+            if len(split_text) > 1:
+                paragraph.add_run(split_text[1])
+
+    for paragraph in doc.paragraphs:
+        replace_in_paragraph(paragraph)
+    for table in doc.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                for paragraph in cell.paragraphs:
+                    replace_in_paragraph(paragraph)
+    for section in doc.sections:
+        header = section.header
+        for paragraph in header.paragraphs:
+            replace_in_paragraph(paragraph)
+        footer = section.footer
+        for paragraph in footer.paragraphs:
+            replace_in_paragraph(paragraph)
+
+def find_and_offset_director_text(doc):
+    # Обход всех параграфов
+    for paragraph in doc.paragraphs:
+        if "________________{FIO_DIRECTOR}" in paragraph.text:
+            paragraph.text = "\n\n\n" + paragraph.text
+
+    # Обход всех секций (header и footer)
+    for section in doc.sections:
+        for header in section.header.paragraphs:
+            if "________________{FIO_DIRECTOR}" in header.text:
+                header.text = "\n\n\n" + header.text
+        for footer in section.footer.paragraphs:
+            if "________________{FIO_DIRECTOR}" in footer.text:
+                footer.text = "\n\n\n" + footer.text
+
+    # Обход всех таблиц
+    for table in doc.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                for paragraph in cell.paragraphs:
+                    if "________________{FIO_DIRECTOR}" in paragraph.text:
+                        paragraph.text = "\n\n\n" + paragraph.text
 
 
 def process_contract(request):
@@ -210,10 +282,8 @@ def process_contract(request):
         template_filename = 'Договор PBN_динамика.docx'
         template_path = os.path.join(os.path.dirname(__file__), '../dogovora', template_filename)
         doc = Document(template_path)
-
         handle_conditional_sections(doc, predmet, site_creation, edo)
         signature_image_path = os.path.join(os.path.dirname(__file__), '../dogovora/podpis.jpg')
-
         if predmet == "DROP_SEARCH":
             remove_unnecessary_paragraphs(doc)
             update_section_numbers(doc)
@@ -232,11 +302,13 @@ def process_contract(request):
             12)
 
         if edo == "YES":
+            replace_underscores_with_signature(doc, "_______________Михайлов Д.С.", signature_image_path)
+            find_and_offset_director_text(doc)
             run = paragraph.add_run()
             run.add_picture(signature_image_path, width=Inches(0.8))  # Настройте ширину по необходимости
-
             paragraph.add_run("Михайлов Д.С.").font.size = Pt(12)
             remove_blank_line_between_points(doc)
+            remove_blank_line_between_points_2(doc)
         else:
             paragraph.add_run("_______________Михайлов Д.С.").font.size = Pt(12)
             remove_blank_line_between_points(doc)
@@ -271,8 +343,6 @@ def process_contract(request):
                         run.font.size = Pt(9)
                         if key == '{DOGOVOR_NUMBER}' or key == '{CUSTOMER_NAME}':
                             run.bold = True
-                    run.font.highlight_color = WD_COLOR_INDEX.YELLOW  # Change 'YELLOW' to the color you prefer
-
 
         for table in doc.tables:
             for row in table.rows:
@@ -286,7 +356,6 @@ def process_contract(request):
                                     run.font.size = Pt(9)
                                     if run.text.strip() == value:
                                         run.bold = True
-                                run.font.highlight_color = WD_COLOR_INDEX.YELLOW  # Change 'YELLOW' to the color you prefer
 
         for section in doc.sections:
             footer = section.footer
@@ -295,7 +364,6 @@ def process_contract(request):
                 for run in paragraph.runs:
                     run.font.name = 'Calibri'
                     run.font.size = Pt(9)
-                run.font.highlight_color = WD_COLOR_INDEX.YELLOW  # Change 'YELLOW' to the color you prefer
 
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
         response['Content-Disposition'] = 'attachment; filename="processed_contract.docx"'

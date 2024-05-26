@@ -435,7 +435,7 @@
         // Для каждого div-контейнера
         divContainers.forEach(div => {
             // Получаем все чекбоксы в текущем контейнере
-            const checkboxes = div.querySelectorAll('input[type="checkbox"]:not(#yandex_system):not(#google_system)');
+            const checkboxes = div.querySelectorAll('input[type="checkbox"]:not(#yandex_system):not(#google_system):not(#yandex_web):not(#search_console):not(#yandex_metric):not(#google_analitic)');
 
             // Добавляем обработчик события change
             checkboxes.forEach(checkbox => {
