@@ -28,6 +28,7 @@ def replace_paragraph_text_with_styles(paragraph, new_text):
     run.font.name = font_name
     run.font.size = font_size
 
+
 def handle_additional_work_sections(doc, selected_services, platform_choice):
     # Найти начальный и конечный индексы параграфов для удаления
     start_index, end_index = None, None
@@ -188,6 +189,7 @@ def add_newline_before_text(doc, search_text):
             new_text = before_text.rstrip() + '\n' + search_text + after_text
             replace_paragraph_text_with_styles(paragraph, new_text)
 
+
 def handle_conditional_sections(doc, edo):
     edo_text_1 = "(в том числе его получения с использованием системы электронного документооборота)" if edo == "YES" else ""
     edo_text_2 = (
@@ -199,8 +201,8 @@ def handle_conditional_sections(doc, edo):
     not_edo_text = "на почту Исполнителя" if edo == "NO" else ""
 
     write_by_hand = (
-            "10.4. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью."
-            "10.5. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон.") if edo == "NO" else ""
+        "10.4. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью."
+        "10.5. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон.") if edo == "NO" else ""
 
     replacements = {
         '{EDO_1}': edo_text_1,
@@ -227,6 +229,64 @@ def replace_tag_with_text(doc, tag, text=None):
                 p = paragraph._element
                 p.getparent().remove(p)
                 p._p = p._element = None
+
+
+def replace_underscores_with_signature(doc, placeholder_text, signature_path):
+    def replace_in_paragraph(paragraph):
+        runs = paragraph.runs
+        full_text = ''.join(run.text for run in runs)
+        if placeholder_text in full_text:
+            split_text = full_text.split(placeholder_text)
+            # Clear existing runs
+            for run in runs:
+                run.text = ""
+            # Add new runs with the signature and styled text
+            paragraph.add_run(split_text[0])
+            paragraph.add_run().add_picture(signature_path, width=Inches(0.8))
+            run = paragraph.add_run("Михайлов Д.С.")
+            run.font.name = 'Calibri'
+            run.font.size = Pt(9)
+            if len(split_text) > 1:
+                paragraph.add_run(split_text[1])
+
+    for paragraph in doc.paragraphs:
+        replace_in_paragraph(paragraph)
+    for table in doc.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                for paragraph in cell.paragraphs:
+                    replace_in_paragraph(paragraph)
+    for section in doc.sections:
+        header = section.header
+        for paragraph in header.paragraphs:
+            replace_in_paragraph(paragraph)
+        footer = section.footer
+        for paragraph in footer.paragraphs:
+            replace_in_paragraph(paragraph)
+
+
+def find_and_offset_director_text(doc):
+    # Обход всех параграфов
+    for paragraph in doc.paragraphs:
+        if "________________{FIO_DIRECTOR}" in paragraph.text:
+            paragraph.text = "\n\n\n" + paragraph.text
+
+    # Обход всех секций (header и footer)
+    for section in doc.sections:
+        for header in section.header.paragraphs:
+            if "________________{FIO_DIRECTOR}" in header.text:
+                header.text = "\n\n\n" + header.text
+        for footer in section.footer.paragraphs:
+            if "________________{FIO_DIRECTOR}" in footer.text:
+                footer.text = "\n\n\n" + footer.text
+
+    # Обход всех таблиц
+    for table in doc.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                for paragraph in cell.paragraphs:
+                    if "________________{FIO_DIRECTOR}" in paragraph.text:
+                        paragraph.text = "\n\n\n" + paragraph.text
 
 
 def process_contract(request):
@@ -370,12 +430,13 @@ def process_contract(request):
             12)
 
         if edo == "YES":
+            paragraph.add_run("_______________Михайлов Д.С.").font.size = Pt(12)
+        else:
+            replace_underscores_with_signature(doc, "_______________Михайлов Д.С.", signature_image_path)
+            find_and_offset_director_text(doc)
             run = paragraph.add_run()
             run.add_picture(signature_image_path, width=Inches(0.8))  # Настройте ширину по необходимости
             paragraph.add_run("Михайлов Д.С.").font.size = Pt(12)
-        else:
-            paragraph.add_run("_______________Михайлов Д.С.").font.size = Pt(12)
-
 
         add_newline_before_text(doc, "10.5. Договор составлен")
         replacements = {

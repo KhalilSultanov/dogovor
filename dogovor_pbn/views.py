@@ -300,6 +300,9 @@ def process_contract(request):
             12)
 
         if edo == "YES":
+            paragraph.add_run("_______________Михайлов Д.С.").font.size = Pt(12)
+            remove_blank_line_between_points(doc)
+        else:
             replace_underscores_with_signature(doc, "_______________Михайлов Д.С.", signature_image_path)
             find_and_offset_director_text(doc)
             run = paragraph.add_run()
@@ -307,9 +310,6 @@ def process_contract(request):
             paragraph.add_run("Михайлов Д.С.").font.size = Pt(12)
             remove_blank_line_between_points(doc)
             remove_blank_line_between_points_2(doc)
-        else:
-            paragraph.add_run("_______________Михайлов Д.С.").font.size = Pt(12)
-            remove_blank_line_between_points(doc)
 
         replacements = {
             '{DOGOVOR_NUMBER}': contract_number,
