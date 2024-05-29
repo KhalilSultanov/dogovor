@@ -76,9 +76,6 @@
     <label for="contract_number">Договор №:</label>
     <input type="text" id="contract_number" name="contract_number" step="1" pattern="[0-9\-]+" required><br><br>
 
-    <label for="day">День:</label>
-    <select id="day" name="date_day">
-    </select>
     <label for="month">Месяц:</label>
     <select id="month" name="date_month" onchange="updateDays()">
       <option value="января">Январь</option>
@@ -94,6 +91,11 @@
         <option value="ноября">Ноябрь</option>
         <option value="декабря">Декабрь</option>
     </select>
+    
+    <label for="day">День:</label>
+    <select id="day" name="date_day">
+    </select>
+    
     <label for="year">Год:</label>
     <select id="year" name="date_year" onchange="updateDays()">
     </select><br><br>
