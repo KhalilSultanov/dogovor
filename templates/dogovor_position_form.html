@@ -128,8 +128,8 @@
         <option value="ноября">Ноябрь</option>
         <option value="декабря">Декабрь</option>
     </select>
-    
-    
+
+
     <label for="day">День:</label>
     <select id="day" name="date_day">
     </select>
@@ -185,8 +185,11 @@
         window.onload = initialize;
     </script>
 
-    <label for="organization_name">Наименование организации:</label>
-    <input type="text" id="organization_name" name="organization_name" minlength="2" required><br><br>
+    <label for="organization_name">Полное наименование организации:</label>
+    <input type="text" id="organization_name" name="organization_name" required minlength="2"><br><br>
+
+    <label for="red_organization_name">Сокращенное наименование организации:</label>
+    <input type="text" id="red_organization_name" name="red_organization_name" required minlength="2"><br><br>
 
     <label for="region_name">Название региона:</label>
     <select id="region_name" name="region_name">

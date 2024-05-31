@@ -248,6 +248,7 @@ def process_contract(request):
         contract_number = request.POST.get('contract_number')
         date_day = request.POST.get('date_day')
         site_name = request.POST.get('site_name')
+        red_organization_name = request.POST.get('red_organization_name')
 
         price_count_digit = request.POST.get('price_count_digit')
         price_count_word = request.POST.get('price_count_word')
@@ -364,6 +365,7 @@ def process_contract(request):
             '{TERMINS_PRILOZHENIE_1}': termins_prilozhenie_1,
             '{TERMINS_PRILOZHENIE_2}': termins_prilozhenie_2,
             '{TERMINS_PRILOZHENIE_3}': termins_prilozhenie_3,
+            '{RED_CUSTOMER_ORGANIZATION}': red_organization_name,
 
             '{SMETA_DAY}': smeta_date_day,
             '{SMETA_MONTH}': smeta_date_month,

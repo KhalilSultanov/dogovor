@@ -342,6 +342,8 @@ def process_contract(request):
         date_month = request.POST.get('date_month')
         date_year = request.POST.get('date_year')
         organization_name = request.POST.get('organization_name')
+        red_organization_name = request.POST.get('red_organization_name')
+
         reason = request.POST.get('reason')
         person_name = request.POST.get('person_name')
         director_name = request.POST.get('director_name')
@@ -456,6 +458,7 @@ def process_contract(request):
             '{FIO_DIRECTOR}': director_name,
             '{CUSTOMER_EMAIL}': email,
             '{CUSTOMER_NAME}': organization_name,
+            '{RED_CUSTOMER_ORGANIZATION}': red_organization_name,
             '{INN}': inn,
             '{OGRN}': ogrn,
             '{REGISTRATION_ADDRESS}': registration_address,

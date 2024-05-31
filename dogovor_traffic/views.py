@@ -254,6 +254,7 @@ def process_contract(request):
         visit_count = request.POST.get('visit_count')
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
+        red_organization_name = request.POST.get('red_organization_name')
 
 
         date_month = request.POST.get('date_month')
@@ -351,6 +352,8 @@ def process_contract(request):
             '{FIO_DIRECTOR}': director_name,
             '{CUSTOMER_EMAIL}': email,
             '{CUSTOMER_NAME}': organization_name,
+            '{RED_CUSTOMER_ORGANIZATION}': red_organization_name,
+
             '{INN}': inn,
             '{OGRN}': ogrn,
             '{REGISTRATION_ADDRESS}': registration_address,

@@ -75,7 +75,7 @@
 
     <label for="month">Месяц:</label>
     <select id="month" name="date_month" onchange="updateDays()">
-      <option value="января">Январь</option>
+        <option value="января">Январь</option>
         <option value="февраля">Февраль</option>
         <option value="марта">Март</option>
         <option value="апреля">Апрель</option>
@@ -88,11 +88,11 @@
         <option value="ноября">Ноябрь</option>
         <option value="декабря">Декабрь</option>
     </select>
-    
+
     <label for="day">День:</label>
     <select id="day" name="date_day">
     </select>
-    
+
     <label for="year">Год:</label>
     <select id="year" name="date_year" onchange="updateDays()">
     </select><br><br>
@@ -145,9 +145,11 @@
         window.onload = initialize;
     </script>
 
-    <label for="organization_name">Наименование организации:</label>
+    <label for="organization_name">Полное наименование организации:</label>
     <input type="text" id="organization_name" name="organization_name" required minlength="2"><br><br>
 
+    <label for="red_organization_name">Сокращенное наименование организации:</label>
+    <input type="text" id="red_organization_name" name="red_organization_name" required minlength="2"><br><br>
 
     <label for="site_name">Ссылка на сайт:</label>
     <input type="text" id="site_name" name="site_name" required><br><br>
