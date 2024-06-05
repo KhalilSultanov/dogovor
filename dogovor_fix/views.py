@@ -83,7 +83,8 @@ def handle_additional_work_sections(doc, platform_choice):
                                               '- При использовании WordPress: Работы программиста по результатам коммерческого аудита. Работы программиста после проведения других аудитов включены в счёт.').replace(
                     '{NOT_WORD_PRESS}', '')
             elif platform_choice == 'not_wordpress':
-                text = paragraph.text.replace('{WORD_PRESS}', '').replace('{NOT_WORD_PRESS}', '- Без использования WordPress: Работы программиста.')
+                text = paragraph.text.replace('{WORD_PRESS}', '').replace('{NOT_WORD_PRESS}',
+                                                                          '- Без использования WordPress: Работы программиста.')
             else:
                 text = paragraph.text.replace('{WORD_PRESS}', '').replace('{NOT_WORD_PRESS}', '')
             replace_paragraph_text_with_styles(paragraph, text)
@@ -92,6 +93,9 @@ def handle_additional_work_sections(doc, platform_choice):
 def handle_conditional_sections(doc, edo):
     edo_text_1 = "(в том числе его получения с использованием системы электронного документооборота)" if edo == "YES" else ""
     edo_text_2 = (
+            "\nЛибо посредством ЭДО: "
+            "\n- ID Исполнителя в системе Тензор: 2BE894898d706174ab2aa3cdfc300550236"
+            "\n- ID Заказчика: {CUSTOMER_ID} "
             "\n10.4. Стороны согласовали, что они вправе осуществлять документооборот в электронном виде по телекоммуникационным каналам связи с использованием усиленной квалификационной электронной подписи посредством системы электронного документооборота. " + "\n" +
             "10.4.1. В целях настоящего договора под электронным документом понимается документ, созданный в электронной форме без предварительного документирования на бумажном носителе, подписанный электронной подписью в порядке, установленном законодательством Российской Федерации. Стороны признают электронные документы, заверенные электронной подписью, при соблюдении требований Федерального закона от 06.04.2011 № 63-ФЗ 'Об электронной подписи' юридически эквивалентными документам на бумажных носителях, заверенным соответствующими подписями и оттиском печатей Сторон." + "\n" +
             "10.5. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью." + "\n" +
@@ -101,7 +105,7 @@ def handle_conditional_sections(doc, edo):
 
     write_by_hand = (
             "\n10.4. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью. " + '\n' +
-            "10.5. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон.)") if edo == "NO" else ""
+            "10.5. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон.") if edo == "NO" else ""
 
     replacements = {
         '{EDO_1}': edo_text_1,
@@ -187,6 +191,7 @@ def find_and_offset_director_text(doc):
                     if "________________{FIO_DIRECTOR}" in paragraph.text:
                         paragraph.text = "\n\n\n" + paragraph.text
 
+
 def add_newline_before_text(doc, search_text):
     """
     Вставляет новую строку перед указанным текстом в документе.
@@ -196,6 +201,8 @@ def add_newline_before_text(doc, search_text):
             before_text, after_text = paragraph.text.split(search_text, 1)
             new_text = before_text.rstrip() + '\n' + search_text + after_text
             replace_paragraph_text_with_styles(paragraph, new_text)
+
+
 def process_contract(request):
     if request.method == 'POST':
 

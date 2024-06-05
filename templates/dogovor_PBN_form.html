@@ -220,6 +220,31 @@
         </select><br><br>
     </div>
 
+    <style>
+        #customer_id_container {
+            display: none;
+        }
+    </style>
+    <script>
+        function toggleCustomerIdField() {
+            const edoSelect = document.getElementById('edo');
+            const customerIdContainer = document.getElementById('customer_id_container');
+            const customerIdInput = document.getElementById('customer_id');
+
+            if (edoSelect.value === 'NO') {
+                customerIdContainer.style.display = 'none';
+                customerIdInput.value = '1';
+            } else {
+                customerIdContainer.style.display = 'block';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.getElementById('edo').addEventListener('change', toggleCustomerIdField);
+            toggleCustomerIdField(); // Initial check
+        });
+    </script>
+
 
     <label for="edo">По ЭДО:</label>
     <select id="edo" name="edo">
@@ -239,8 +264,10 @@
     <label for="email">Email заказчика:</label>
     <input type="email" id="email" name="email" required><br><br>
 
-    <label for="customer_id">ID заказчика:</label>
-    <input type="number" id="customer_id" name="customer_id" required><br><br>
+    <div id="customer_id_container">
+        <label for="customer_id">ID заказчика:</label>
+        <input type="number" id="customer_id" name="customer_id" required><br><br>
+    </div>
 
     <label for="month_count">Действие договора в течении:</label>
     <select id="month_count" name="month_count">
