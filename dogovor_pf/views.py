@@ -26,13 +26,15 @@ def replace_paragraph_text_with_styles(paragraph, new_text):
     run.bold = is_bold
     run.font.name = font_name
     run.font.size = font_size
+
+
 def handle_conditional_sections(doc, edo):
     edo_text_1 = "(в том числе его получения с использованием системы электронного документооборота)" if edo == "YES" else ""
     edo_text_2 = (
-            "\n10.4. Стороны согласовали, что они вправе осуществлять документооборот в электронном виде по телекоммуникационным каналам связи с использованием усиленной квалификационной электронной подписи посредством системы электронного документооборота СБИС. " + "\n" +
+            "\n10.4. Стороны согласовали, что они вправе осуществлять документооборот в электронном виде по телекоммуникационным каналам связи с использованием усиленной квалификационной электронной подписи посредством системы электронного документооборота. " + "\n" +
             "10.4.1. В целях настоящего договора под электронным документом понимается документ, созданный в электронной форме без предварительного документирования на бумажном носителе, подписанный электронной подписью в порядке, установленном законодательством Российской Федерации. Стороны признают электронные документы, заверенные электронной подписью, при соблюдении требований Федерального закона от 06.04.2011 № 63-ФЗ 'Об электронной подписи' юридически эквивалентными документам на бумажных носителях, заверенным соответствующими подписями и оттиском печатей Сторон." + "\n" +
             "10.5. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью." + "\n" +
-            "10.6. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон. ") \
+            "10.6. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон, подписанных лично либо посредством ЭДО. ") \
         if edo == "YES" else ""
     not_edo_text = "на почту Исполнителя" if edo == "NO" else ""
 
@@ -65,6 +67,7 @@ def replace_tag_with_text(doc, tag, text=None):
                 p = paragraph._element
                 p.getparent().remove(p)
                 p._p = p._element = None
+
 
 def replace_underscores_with_signature(doc, placeholder_text, signature_path):
     def replace_in_paragraph(paragraph):
@@ -99,6 +102,7 @@ def replace_underscores_with_signature(doc, placeholder_text, signature_path):
         for paragraph in footer.paragraphs:
             replace_in_paragraph(paragraph)
 
+
 def find_and_offset_director_text(doc):
     # Обход всех параграфов
     for paragraph in doc.paragraphs:
@@ -122,6 +126,7 @@ def find_and_offset_director_text(doc):
                     if "________________{FIO_DIRECTOR}" in paragraph.text:
                         paragraph.text = "\n\n\n" + paragraph.text
 
+
 def process_contract(request):
     if request.method == 'POST':
 
@@ -136,6 +141,7 @@ def process_contract(request):
         date_year = request.POST.get('date_year')
         organization_name = request.POST.get('organization_name')
         red_organization_name = request.POST.get('red_organization_name')
+        customer_id = request.POST.get('customer_id')
 
         reason = request.POST.get('reason')
         person_name = request.POST.get('person_name')
@@ -191,6 +197,7 @@ def process_contract(request):
             '{SITE_NAME}': site_name,
             '{PRICE_COUNT}': price_count,
             '{LINK}': link,
+            '{CUSTOMER_ID}': customer_id,
 
             '{FIO_DIRECTOR}': director_name,
             '{CUSTOMER_EMAIL}': email,

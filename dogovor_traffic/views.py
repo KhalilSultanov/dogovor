@@ -28,8 +28,6 @@ def replace_paragraph_text_with_styles(paragraph, new_text):
     run.font.size = font_size
 
 
-
-
 def replace_analytics_tags(doc, analitic_system, analitic_system_user, system_search):
     # Замена для "Яндекс.Вебмастер" и "Search Console"
     if 'yandex_web' in analitic_system:
@@ -64,14 +62,16 @@ def replace_analytics_tags(doc, analitic_system, analitic_system_user, system_se
     replace_tag_with_text(doc, '{YANDEX}', search_analytics)
     replace_tag_with_text(doc, '{GOOGLE}', '')  # Тег удаляем, текст уже вставлен
 
-def handle_additional_work_sections(doc, platform_choice):
 
+def handle_additional_work_sections(doc, platform_choice):
     for paragraph in doc.paragraphs:
         if '{WORD_PRESS}' in paragraph.text or '{NOT_WORD_PRESS}' in paragraph.text:
             if platform_choice == 'wordpress':
-                text = paragraph.text.replace('{WORD_PRESS}', 'Работы программиста по результатам коммерческого аудита. Работы программиста после проведения других аудитов включены в счёт.').replace('{NOT_WORD_PRESS}', '')
+                text = paragraph.text.replace('{WORD_PRESS}',
+                                              '- При использовании WordPress: Работы программиста по результатам коммерческого аудита. Работы программиста после проведения других аудитов включены в счёт.').replace(
+                    '{NOT_WORD_PRESS}', '')
             elif platform_choice == 'not_wordpress':
-                text = paragraph.text.replace('{WORD_PRESS}', '').replace('{NOT_WORD_PRESS}', 'Работы программиста.')
+                text = paragraph.text.replace('{WORD_PRESS}', '').replace('{NOT_WORD_PRESS}', '- Без использования WordPress: Работы программиста.')
             else:
                 text = paragraph.text.replace('{WORD_PRESS}', '').replace('{NOT_WORD_PRESS}', '')
             replace_paragraph_text_with_styles(paragraph, text)
@@ -80,16 +80,16 @@ def handle_additional_work_sections(doc, platform_choice):
 def handle_conditional_sections(doc, edo):
     edo_text_1 = "(в том числе его получения с использованием системы электронного документооборота)" if edo == "YES" else ""
     edo_text_2 = (
-                "\n9.4. Стороны согласовали, что они вправе осуществлять документооборот в электронном виде по телекоммуникационным каналам связи с использованием усиленной квалификационной электронной подписи посредством системы электронного документооборота СБИС. " + "\n" +
-                "9.4.1. В целях настоящего договора под электронным документом понимается документ, созданный в электронной форме без предварительного документирования на бумажном носителе, подписанный электронной подписью в порядке, установленном законодательством Российской Федерации. Стороны признают электронные документы, заверенные электронной подписью, при соблюдении требований Федерального закона от 06.04.2011 № 63-ФЗ 'Об электронной подписи' юридически эквивалентными документам на бумажных носителях, заверенным соответствующими подписями и оттиском печатей Сторон." + "\n" +
-                "9.5. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью." + "\n" +
-                "9.6. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон. ") \
+            "\n9.4. Стороны согласовали, что они вправе осуществлять документооборот в электронном виде по телекоммуникационным каналам связи с использованием усиленной квалификационной электронной подписи посредством системы электронного документооборота. " + "\n" +
+            "9.4.1. В целях настоящего договора под электронным документом понимается документ, созданный в электронной форме без предварительного документирования на бумажном носителе, подписанный электронной подписью в порядке, установленном законодательством Российской Федерации. Стороны признают электронные документы, заверенные электронной подписью, при соблюдении требований Федерального закона от 06.04.2011 № 63-ФЗ 'Об электронной подписи' юридически эквивалентными документам на бумажных носителях, заверенным соответствующими подписями и оттиском печатей Сторон." + "\n" +
+            "9.5. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью." + "\n" +
+            "9.6. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон, подписанных лично либо посредством ЭДО. ") \
         if edo == "YES" else ""
     not_edo_text = "на почту Исполнителя" if edo == "NO" else ""
 
     write_by_hand = (
-                "\n9.4. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью. " + '\n' +
-                "9.5. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон.)") if edo == "NO" else ""
+            "\n9.4. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью. " + '\n' +
+            "9.5. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон.)") if edo == "NO" else ""
 
     replacements = {
         '{EDO_1}': edo_text_1,
@@ -98,12 +98,12 @@ def handle_conditional_sections(doc, edo):
         '{WRITE_BY_HAND}': write_by_hand
     }
 
-
     for paragraph in doc.paragraphs:
         for tag, replacement in replacements.items():
             if tag in paragraph.text:
                 paragraph_text = paragraph.text.replace(tag, replacement)
                 replace_paragraph_text_with_styles(paragraph, paragraph_text)
+
 
 def replace_tag_with_text(doc, tag, text=None):
     for paragraph in doc.paragraphs:
@@ -116,6 +116,7 @@ def replace_tag_with_text(doc, tag, text=None):
                 p = paragraph._element
                 p.getparent().remove(p)
                 p._p = p._element = None
+
 
 def replace_underscores_with_signature(doc, placeholder_text, signature_path):
     def replace_in_paragraph(paragraph):
@@ -174,6 +175,7 @@ def find_and_offset_director_text(doc):
                     if "________________{FIO_DIRECTOR}" in paragraph.text:
                         paragraph.text = "\n\n\n" + paragraph.text
 
+
 def add_newline_before_text(doc, search_text):
     """
     Вставляет новую строку перед указанным текстом в документе.
@@ -184,35 +186,41 @@ def add_newline_before_text(doc, search_text):
             new_text = before_text.rstrip() + '\n' + search_text + after_text
             replace_paragraph_text_with_styles(paragraph, new_text)
 
+
 def handle_search_engine(doc, search_engine_choice):
     if search_engine_choice == 'yandex':
-        replace_tag_with_text(doc, '{YANDEX_1}', '4.3. Отчеты о посещениях Интернет-сайта составляются на основании данных Яндекс.Метрика по показателю «Посетители». ')
+        replace_tag_with_text(doc, '{YANDEX_1}',
+                              '4.3. Отчеты о посещениях Интернет-сайта составляются на основании данных Яндекс.Метрика по показателю «Посетители». ')
         replace_tag_with_text(doc, '{GOOGLE_1}', '')
-        replace_tag_with_text(doc, '{YANDEX_2}', '5.10. В случае если в период выполнения работ имела место неработоспособность системы анализа Яндекс.Метрика, установленная на Интернет-сайте, по вине любой из сторон, то расчет количества посещений осуществляется Исполнителем согласно данных других аналитических систем, о чем делается соответствующая запись в направляемом Заказчику отчете.')
+        replace_tag_with_text(doc, '{YANDEX_2}',
+                              '5.10. В случае если в период выполнения работ имела место неработоспособность системы анализа Яндекс.Метрика, установленная на Интернет-сайте, по вине любой из сторон, то расчет количества посещений осуществляется Исполнителем согласно данных других аналитических систем, о чем делается соответствующая запись в направляемом Заказчику отчете.')
         replace_tag_with_text(doc, '{GOOGLE_2}', '')
         replace_tag_with_text(doc, '{YANDEX}', 'Яндекс.Метрика')
         replace_tag_with_text(doc, '{GOOGLE}', '')
     elif search_engine_choice == 'google':
-        replace_tag_with_text(doc, '{GOOGLE_1}', '4.3. Отчеты о посещениях Интернет-сайта составляются на основании данных Google Analytics по показателю «Сеансы». ')
+        replace_tag_with_text(doc, '{GOOGLE_1}',
+                              '4.3. Отчеты о посещениях Интернет-сайта составляются на основании данных Google Analytics по показателю «Сеансы». ')
         replace_tag_with_text(doc, '{YANDEX_1}', '')
         replace_tag_with_text(doc, '{YANDEX_2}', '')
-        replace_tag_with_text(doc, '{GOOGLE_2}', '5.10. В случае если в период выполнения работ имела место неработоспособность системы анализа Google Analytics, установленная на Интернет-сайте, по вине любой из сторон, то расчет количества посещений осуществляется Исполнителем согласно данных других аналитических систем, о чем делается соответствующая запись в направляемом Заказчику отчете.')
+        replace_tag_with_text(doc, '{GOOGLE_2}',
+                              '5.10. В случае если в период выполнения работ имела место неработоспособность системы анализа Google Analytics, установленная на Интернет-сайте, по вине любой из сторон, то расчет количества посещений осуществляется Исполнителем согласно данных других аналитических систем, о чем делается соответствующая запись в направляемом Заказчику отчете.')
         replace_tag_with_text(doc, '{GOOGLE}', 'Google Analytics')
         replace_tag_with_text(doc, '{YANDEX}', '')
+
+
 def process_contract(request):
     if request.method == 'POST':
-
 
         service_to_tag_mapping = {
 
             'optimization_headers': ('{HEAD_PAGES_1}', '- Оптимизация заголовков страниц;'),
             'optimization_headers2': (
-            '{HEAD_PAGES_2}', '- Оптимизация заголовков страниц и техническое задание на их внедрение;'),
+                '{HEAD_PAGES_2}', '- Оптимизация заголовков страниц и техническое задание на их внедрение;'),
             'optimization_headers3': ('{HEAD_PAGES_3}', ''),
 
             'optimization_metatags': ('{METATAGS_1}', '- Оптимизация метатегов;'),
             'optimization_metatags2': (
-            '{METATAGS_2}', '- Оптимизация метатегов и техническое задание на их внедрение;'),
+                '{METATAGS_2}', '- Оптимизация метатегов и техническое задание на их внедрение;'),
             'optimization_metatags3': ('{METATAGS_3}', ''),
 
             'writing_optimization': ('{NEURO_1}', '- Написание текстов с помощью нейросетей и их оптимизация;'),
@@ -221,7 +229,7 @@ def process_contract(request):
 
             'site_structure_optimization': ('{STRUCTURE_1}', '- Оптимизация структуры сайта;'),
             'site_structure_optimization2': (
-            '{STRUCTURE_2}', '- Оптимизация структуры сайта и техническое задание на внедрение;'),
+                '{STRUCTURE_2}', '- Оптимизация структуры сайта и техническое задание на внедрение;'),
             'site_structure_optimization3': ('{STRUCTURE_3}', ''),
 
             'technical_error_fixing': ('{FIX_1}', '- Устранение технических ошибок на сайте;'),
@@ -229,7 +237,8 @@ def process_contract(request):
             'technical_error_fixing3': ('{FIX_3}', ''),
 
             'design_layouts': (
-            '{TZ_1}', '- Техническое задание (ТЗ) на создание дизайн-макетов отдельных блоков или страниц на сайте;'),
+                '{TZ_1}',
+                '- Техническое задание (ТЗ) на создание дизайн-макетов отдельных блоков или страниц на сайте;'),
 
             'creating_pages': ('{CREATE_PAGES_1}', '- Создание страниц на сайте;'),
             'creating_pages2': ('{CREATE_PAGES_2}', '- Техническое задание на создание страниц на сайте;'),
@@ -243,6 +252,7 @@ def process_contract(request):
         price_count_digit = request.POST.get('price_count_digit')
         price_count_word = request.POST.get('price_count_word')
         search_engine_choice = request.POST.get('search_engine', None)
+        customer_id = request.POST.get('customer_id')
 
         analitic_system = request.POST.getlist('analitic_system')
         analitic_system_user = request.POST.getlist('analitic_system_user')
@@ -255,7 +265,6 @@ def process_contract(request):
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
         red_organization_name = request.POST.get('red_organization_name')
-
 
         date_month = request.POST.get('date_month')
         date_year = request.POST.get('date_year')
@@ -273,12 +282,9 @@ def process_contract(request):
         bic = request.POST.get('bic')
         edo = request.POST.get('edo')
 
-
-
         support_options = request.POST.getlist('support[]')
         platform_choice = request.POST.get('platform', None)
         selected_services = request.POST.getlist('services[]')
-
 
         template_filename = 'Договор Трафик метки.docx'
         template_path = os.path.join(os.path.dirname(__file__), '../dogovora', template_filename)
@@ -286,7 +292,7 @@ def process_contract(request):
         signature_image_path = os.path.join(os.path.dirname(__file__), '../dogovora/podpis.jpg')
 
         if 'support_site' in support_options:
-            support_text = '- Поддержка сайта в техническом плане;'
+            support_text = '- Поддержка технического состояния сайта;'
             replace_tag_with_text(doc, '{SITE_SUPPORT}', support_text)
         else:
             replace_tag_with_text(doc, '{SITE_SUPPORT}')
@@ -308,7 +314,6 @@ def process_contract(request):
         handle_additional_work_sections(doc, platform_choice)
         handle_search_engine(doc, search_engine_choice)
         replace_analytics_tags(doc, analitic_system, analitic_system_user, system_search)
-
 
         footer = doc.sections[0].footer
         for paragraph in footer.paragraphs:
@@ -353,6 +358,7 @@ def process_contract(request):
             '{CUSTOMER_EMAIL}': email,
             '{CUSTOMER_NAME}': organization_name,
             '{RED_CUSTOMER_ORGANIZATION}': red_organization_name,
+            '{CUSTOMER_ID}': customer_id,
 
             '{INN}': inn,
             '{OGRN}': ogrn,
@@ -373,7 +379,6 @@ def process_contract(request):
                         if key == '{DOGOVOR_NUMBER}' or key == '{CUSTOMER_NAME}':
                             run.bold = True
 
-
         for table in doc.tables:
             for row in table.rows:
                 for cell in row.cells:
@@ -387,7 +392,6 @@ def process_contract(request):
                                     if run.text.strip() == value:
                                         run.bold = True
 
-
         for section in doc.sections:
             footer = section.footer
             for paragraph in footer.paragraphs:
@@ -395,7 +399,6 @@ def process_contract(request):
                 for run in paragraph.runs:
                     run.font.name = 'Calibri'
                     run.font.size = Pt(9)
-
 
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
         response['Content-Disposition'] = 'attachment; filename="processed_contract.docx"'

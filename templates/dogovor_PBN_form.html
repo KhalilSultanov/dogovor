@@ -141,11 +141,11 @@
         <option value="ноября">Ноябрь</option>
         <option value="декабря">Декабрь</option>
     </select>
-    
+
     <label for="day">День:</label>
     <select id="day" name="date_day">
     </select>
-    
+
     <label for="year">Год:</label>
     <select id="year" name="date_year" onchange="updateDays()">
     </select><br><br>
@@ -200,8 +200,8 @@
 
     <label for="organization_name">Полное наименование организации:</label>
     <input type="text" id="organization_name" name="organization_name" required minlength="2"><br><br>
-    
-    
+
+
     <label for="red_organization_name">Сокращенное наименование организации:</label>
     <input type="text" id="red_organization_name" name="red_organization_name" required minlength="2"><br><br>
 
@@ -239,6 +239,8 @@
     <label for="email">Email заказчика:</label>
     <input type="email" id="email" name="email" required><br><br>
 
+    <label for="customer_id">ID заказчика:</label>
+    <input type="number" id="customer_id" name="customer_id" required><br><br>
 
     <label for="month_count">Действие договора в течении:</label>
     <select id="month_count" name="month_count">

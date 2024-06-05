@@ -56,10 +56,11 @@ def handle_additional_work_sections(doc, selected_services, platform_choice):
         if '{WORD_PRESS}' in paragraph.text or '{NOT_WORD_PRESS}' in paragraph.text:
             if platform_choice == 'wordpress':
                 text = paragraph.text.replace('{WORD_PRESS}',
-                                              'Работы программиста по результатам коммерческого аудита. Работы программиста после проведения других аудитов включены в счёт').replace(
+                                              '- При использовании WordPress: Работы программиста по результатам коммерческого аудита. Работы программиста после проведения других аудитов включены в счёт').replace(
                     '{NOT_WORD_PRESS}', '')
             elif platform_choice == 'not_wordpress':
-                text = paragraph.text.replace('{WORD_PRESS}', '').replace('{NOT_WORD_PRESS}', 'Работы программиста.')
+                text = paragraph.text.replace('{WORD_PRESS}', '').replace('{NOT_WORD_PRESS}',
+                                                                          '- Без использования WordPress: Работы программиста.')
             else:
                 text = paragraph.text.replace('{WORD_PRESS}', '').replace('{NOT_WORD_PRESS}', '')
             replace_paragraph_text_with_styles(paragraph, text)
@@ -193,10 +194,10 @@ def add_newline_before_text(doc, search_text):
 def handle_conditional_sections(doc, edo):
     edo_text_1 = "(в том числе его получения с использованием системы электронного документооборота)" if edo == "YES" else ""
     edo_text_2 = (
-            "\n10.4. Стороны согласовали, что они вправе осуществлять документооборот в электронном виде по телекоммуникационным каналам связи с использованием усиленной квалификационной электронной подписи посредством системы электронного документооборота СБИС. " + "\n" +
+            "\n10.4. Стороны согласовали, что они вправе осуществлять документооборот в электронном виде по телекоммуникационным каналам связи с использованием усиленной квалификационной электронной подписи посредством системы электронного документооборота. " + "\n" +
             "10.4.1. В целях настоящего договора под электронным документом понимается документ, созданный в электронной форме без предварительного документирования на бумажном носителе, подписанный электронной подписью в порядке, установленном законодательством Российской Федерации. Стороны признают электронные документы, заверенные электронной подписью, при соблюдении требований Федерального закона от 06.04.2011 № 63-ФЗ 'Об электронной подписи' юридически эквивалентными документам на бумажных носителях, заверенным соответствующими подписями и оттиском печатей Сторон." + "\n" +
             "10.5. Все изменения и дополнения к договору оформляются в виде дополнений и приложений к договору, являющийся его неотъемлемой частью." + "\n" +
-            "10.6. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон. ") \
+            "10.6. Договор составлен в двух подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из сторон, подписанных лично либо посредством ЭДО. ") \
         if edo == "YES" else ""
     not_edo_text = "на почту Исполнителя" if edo == "NO" else ""
 
@@ -349,6 +350,8 @@ def process_contract(request):
         director_name = request.POST.get('director_name')
         email = request.POST.get('email')
         inn = request.POST.get('inn')
+        customer_id = request.POST.get('customer_id')
+
         ogrn = request.POST.get('ogrn')
         registration_address = request.POST.get('registration_address')
         checking_account = request.POST.get('checking_account')
@@ -399,7 +402,7 @@ def process_contract(request):
                 replace_paragraph_text_with_styles(paragraph, paragraph_text)
 
         if 'support_site' in support_options:
-            support_text = '- Поддержка сайта в техническом плане;'
+            support_text = '- Поддержка технического состояния сайта;'
             replace_tag_with_text(doc, '{SITE_SUPPORT}', support_text)
         else:
             replace_tag_with_text(doc, '{SITE_SUPPORT}')
@@ -460,6 +463,8 @@ def process_contract(request):
             '{CUSTOMER_NAME}': organization_name,
             '{RED_CUSTOMER_ORGANIZATION}': red_organization_name,
             '{INN}': inn,
+            '{CUSTOMER_ID}': customer_id,
+
             '{OGRN}': ogrn,
             '{REGISTRATION_ADDRESS}': registration_address,
             '{PAYMENT_ACCOUNT}': checking_account,
