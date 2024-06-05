@@ -68,7 +68,7 @@ def handle_additional_work_sections(doc, platform_choice):
         if '{WORD_PRESS}' in paragraph.text or '{NOT_WORD_PRESS}' in paragraph.text:
             if platform_choice == 'wordpress':
                 text = paragraph.text.replace('{WORD_PRESS}',
-                                              '- При использовании WordPress: Работы программиста по результатам коммерческого аудита. Работы программиста после проведения других аудитов включены в счёт.').replace(
+                                              '- При использовании WordPress: Работы программиста по рзультатам коммерческого аудита. Работы программиста после проведения других аудитов включены в счёт.').replace(
                     '{NOT_WORD_PRESS}', '')
             elif platform_choice == 'not_wordpress':
                 text = paragraph.text.replace('{WORD_PRESS}', '').replace('{NOT_WORD_PRESS}', '- Без использования WordPress: Работы программиста.')
@@ -238,7 +238,7 @@ def process_contract(request):
 
             'design_layouts': (
                 '{TZ_1}',
-                '- Техническое задание (ТЗ) на создание дизайн-макетов отдельных блоков или страниц на сайте;'),
+                '- Техническое задание на создание дизайн-макетов отдельных блоков или страниц на сайте;'),
 
             'creating_pages': ('{CREATE_PAGES_1}', '- Создание страниц на сайте;'),
             'creating_pages2': ('{CREATE_PAGES_2}', '- Техническое задание на создание страниц на сайте;'),

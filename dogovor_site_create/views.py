@@ -242,7 +242,7 @@ def process_contract(request):
             'site_structure_optimization': ('{STRUCTURE}', '- Оптимизация структуры сайта;'),
             'technical_error_fixing': ('{FIX}', '- Устранение технических ошибок на сайте;'),
             'design_layouts': (
-                '{TZ}', '- Техническое задание (ТЗ) на создание дизайн-макетов отдельных блоков или страниц на сайте;'),
+                '{TZ}', '- Техническое задание на создание дизайн-макетов отдельных блоков или страниц на сайте;'),
             'creating_pages': ('{CREATE_PAGES}', '- Создание страниц на сайте;')
         }
         contract_number = request.POST.get('contract_number')
