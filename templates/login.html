@@ -100,7 +100,6 @@
                 body: formData,
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRFToken': formData.get('csrfmiddlewaretoken'), // добавьте CSRF-токен в заголовок
                 }
             })
             .then(response => {
