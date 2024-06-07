@@ -75,7 +75,7 @@
 <h2>Форма для заполнения Договора FIX</h2>
 
 
-<form id="myForm" action="/dogovor_fix/" method="post">
+<form id="myForm" action="/main/dogovor_fix/" method="post">
     {% csrf_token %}
     <label for="contract_number">Договор №:</label>
     <input type="text" id="contract_number" name="contract_number" step="1" pattern="[0-9\-]+" required><br><br>

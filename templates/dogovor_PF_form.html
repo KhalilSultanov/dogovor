@@ -68,7 +68,7 @@
 </head>
 <body>
 <h2>Форма для заполнения Договора PF</h2>
-<form action="/dogovor_pf/" method="post">
+<form action="/main/dogovor_pf/" method="post">
     {% csrf_token %}
     <label for="contract_number">Договор №:</label>
     <input type="text" id="contract_number" name="contract_number" step="1" pattern="[0-9\-]+" required><br><br>

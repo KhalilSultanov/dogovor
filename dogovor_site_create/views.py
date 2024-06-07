@@ -234,7 +234,9 @@ def handle_search_engine(doc, search_engine_choice):
         replace_tag_with_text(doc, '{GOOGLE}', 'Google Analytics')
         replace_tag_with_text(doc, '{YANDEX}', '')
 
+from selection.auth import login_required  # Убедитесь, что декоратор импортирован
 
+@login_required
 def process_contract(request):
     if request.method == 'POST':
 

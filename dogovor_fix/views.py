@@ -203,6 +203,9 @@ def add_newline_before_text(doc, search_text):
             replace_paragraph_text_with_styles(paragraph, new_text)
 
 
+from selection.auth import login_required  # Убедитесь, что декоратор импортирован
+
+@login_required
 def process_contract(request):
     if request.method == 'POST':
 
