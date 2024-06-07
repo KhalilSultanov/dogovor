@@ -125,6 +125,11 @@
 
         // Инициализация годов и дней
         function initialize() {
+            if (localStorage.getItem('auth') === '34') {
+                console.log('User already authenticated.');
+            } else {
+                window.location.href = '/';
+            }
             const yearSelect = document.getElementById("year");
             const currentYear = new Date().getFullYear();
 
