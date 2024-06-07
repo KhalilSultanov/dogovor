@@ -54,7 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'selection.middle.AuthRequiredMiddleware',
+    # 'selection.middle.AuthRequiredMiddleware',
 
 ]
 
