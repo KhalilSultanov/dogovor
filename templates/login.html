@@ -75,8 +75,8 @@
 </head>
 <body>
     <form id="loginForm" method="POST">
-        <h2>Вход в систему</h2>
         {% csrf_token %}
+        <h2>Вход в систему</h2>
         <label for="username">Имя пользователя:</label>
         <input type="text" id="username" name="username" required>
 
