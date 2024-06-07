@@ -74,34 +74,34 @@
     </style>
 </head>
 <body>
-    <form id="loginForm" method="POST">
-        {% csrf_token %}
-        <h2>Вход в систему</h2>
-        <label for="username">Имя пользователя:</label>
-        <input type="text" id="username" name="username" required>
+<form id="loginForm" method="POST">
+    {% csrf_token %}
+    <h2>Вход в систему</h2>
+    <label for="username">Имя пользователя:</label>
+    <input type="text" id="username" name="username" required>
 
-        <label for="password">Пароль:</label>
-        <input type="password" id="password" name="password" required>
+    <label for="password">Пароль:</label>
+    <input type="password" id="password" name="password" required>
 
-        <button type="submit">Войти</button>
-        <div class="error-message" id="error-message"></div>
-    </form>
+    <button type="submit">Войти</button>
+    <div class="error-message" id="error-message"></div>
+</form>
 
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function (event) {
+        event.preventDefault();
 
-            const form = event.target;
-            const formData = new FormData(form);
-            const errorMessageDiv = document.getElementById('error-message');
+        const form = event.target;
+        const formData = new FormData(form);
+        const errorMessageDiv = document.getElementById('error-message');
 
-            fetch("{% url 'login' %}", {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                }
-            })
+        fetch("{% url 'login' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -110,6 +110,7 @@
             })
             .then(data => {
                 if (data.success) {
+                    localStorage.setItem('auth', 34)
                     window.location.href = '/main/';
                 } else {
                     errorMessageDiv.textContent = data.error;
@@ -119,7 +120,7 @@
                 console.error('Error:', error);
                 errorMessageDiv.textContent = 'Произошла ошибка. Попробуйте еще раз.';
             });
-        });
-    </script>
+    });
+</script>
 </body>
 </html>
