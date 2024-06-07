@@ -258,9 +258,7 @@ def find_and_offset_director_text(doc):
                     if "________________{FIO_DIRECTOR}" in paragraph.text:
                         paragraph.text = "\n\n\n" + paragraph.text
 
-from selection.auth import login_required  # Убедитесь, что декоратор импортирован
 
-@login_required
 def process_contract(request):
     if request.method == 'POST':
         contract_number = request.POST.get('contract_number')
