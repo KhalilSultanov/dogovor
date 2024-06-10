@@ -275,7 +275,7 @@ def process_contract(request):
         platform_choice = request.POST.get('platform', None)
         selected_services = request.POST.getlist('services[]')
 
-        template_filename = 'Договор ФИКС метки.docx'
+        template_filename = 'Договор Фикс метки.docx'
         template_path = os.path.join(os.path.dirname(__file__), '../dogovora', template_filename)
         doc = Document(template_path)
         signature_image_path = os.path.join(os.path.dirname(__file__), '../dogovora/podpis.jpg')
