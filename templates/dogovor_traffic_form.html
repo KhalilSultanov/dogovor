@@ -282,35 +282,29 @@
     });
     </script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Функция для проверки состояния чекбокса WordPress, если не выбрана опция "Техническое задание (ТЗ)"
-            function checkWordPressSelection() {
-                const designLayoutsCheckbox = document.getElementById('design_layouts');
-                const wordpressCheckbox = document.getElementById('platform_wordpress');
+        document.getElementById('myForm').addEventListener('submit', function (e) {
+            var analyticsChecked = document.querySelector('input[name="analitic_system"]:checked');
+            var dataAnalyticsChecked = document.querySelector('input[name="analitic_system_user"]:checked');
+            var searchSystemChecked = document.querySelector('input[name="search_system"]:checked');
 
-                // Если не выбрано "Техническое задание (ТЗ)", убедитесь, что выбран WordPress
-                if (!designLayoutsCheckbox.checked && !wordpressCheckbox.checked) {
-                    alert('Пожалуйста, выберите WordPress, так как вы не выбрали "Техническое задание (ТЗ)".');
+            // Проверяем, выбран ли хотя бы один чекбокс в каждой группе
+            if (!analyticsChecked || !dataAnalyticsChecked || !searchSystemChecked) {
+                alert('Пожалуйста, выберите хотя бы один вариант в каждой группе.');
+
+                // Добавляем подсветку для каждой группы без выбранных чекбоксов
+                if (!analyticsChecked) {
+                    document.querySelector('input[name="analitic_system"]').parentNode.style.border = '1px solid #ff0000';
                 }
+                if (!dataAnalyticsChecked) {
+                    document.querySelector('input[name="analitic_system_user"]').parentNode.style.border = '1px solid #ff0000';
+                }
+                if (!searchSystemChecked) {
+                    document.querySelector('input[name="search_system"]').parentNode.style.border = '1px solid #ff0000';
+                }
+
+                e.preventDefault(); // предотвратить отправку формы
             }
-
-            // Проверка при изменении состояния чекбокса "Техническое задание (ТЗ)"
-            document.getElementById('design_layouts').addEventListener('change', checkWordPressSelection);
-
-            // Проверка при отправке формы
-            document.querySelector('form').addEventListener('submit', function (event) {
-                checkWordPressSelection(); // Проверка перед отправкой формы
-                const designLayoutsCheckbox = document.getElementById('design_layouts');
-                const wordpressCheckbox = document.getElementById('platform_wordpress');
-
-                // Если не выбрано "Техническое задание (ТЗ)", убедитесь, что выбран WordPress
-                if (!designLayoutsCheckbox.checked && !wordpressCheckbox.checked) {
-                    // Если WordPress не выбран, предотвращаем отправку формы
-                    event.preventDefault();
-                }
-            });
         });
-
     </script>
 
     <div>
@@ -393,7 +387,7 @@
 
     <div id="customer_id_container">
         <label for="customer_id">ID заказчика:</label>
-        <input type="number" id="customer_id" name="customer_id" required><br><br>
+        <input id="customer_id" name="customer_id" required><br><br>
     </div>
 
     <style>

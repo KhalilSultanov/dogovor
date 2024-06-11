@@ -82,6 +82,7 @@
             }
         }
 
+
         tzCheckbox.addEventListener('change', toggleWordPressOptions);
         toggleWordPressOptions();
     });
@@ -336,35 +337,39 @@
     </script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Функция для проверки состояния чекбокса WordPress, если не выбрана опция "Техническое задание (ТЗ)"
-            function checkWordPressSelection() {
-                const designLayoutsCheckbox = document.getElementById('design_layouts');
-                const wordpressCheckbox = document.getElementById('platform_wordpress');
+            // Получение элементов чекбоксов и радио кнопок
+            const designLayoutsCheckbox = document.getElementById('design_layouts');
+            const wordpressCheckbox = document.getElementById('platform_wordpress');
+            const notWordpressCheckbox = document.getElementById('platform_not_wordpress');
 
-                // Если не выбрано "Техническое задание (ТЗ)", убедитесь, что выбран WordPress
-                if (!designLayoutsCheckbox.checked && !wordpressCheckbox.checked) {
-                    alert('Пожалуйста, выберите WordPress, так как вы не выбрали "Техническое задание (ТЗ)".');
+            // Функция для проверки и управления выбором платформы
+            function checkPlatformSelection(event) {
+                // Если не выбрано "Техническое задание (ТЗ)" и не выбрана ни одна из платформ
+                if (!designLayoutsCheckbox.checked && !wordpressCheckbox.checked && !notWordpressCheckbox.checked) {
+                    alert('Пожалуйста, выберите платформу, так как вы не выбрали "Техническое задание (ТЗ)".');
+                    event.preventDefault(); // Предотвратить отправку формы
+                }
+            }
+
+            // Функция для сброса выбора платформы
+            function resetPlatformSelection() {
+                if (designLayoutsCheckbox.checked) {
+                    // Сброс выбора платформ
+                    wordpressCheckbox.checked = false;
+                    notWordpressCheckbox.checked = false;
                 }
             }
 
             // Проверка при изменении состояния чекбокса "Техническое задание (ТЗ)"
-            document.getElementById('design_layouts').addEventListener('change', checkWordPressSelection);
+            designLayoutsCheckbox.addEventListener('change', resetPlatformSelection);
 
             // Проверка при отправке формы
             document.querySelector('form').addEventListener('submit', function (event) {
-                checkWordPressSelection(); // Проверка перед отправкой формы
-                const designLayoutsCheckbox = document.getElementById('design_layouts');
-                const wordpressCheckbox = document.getElementById('platform_wordpress');
-
-                // Если не выбрано "Техническое задание (ТЗ)", убедитесь, что выбран WordPress
-                if (!designLayoutsCheckbox.checked && !wordpressCheckbox.checked) {
-                    // Если WordPress не выбран, предотвращаем отправку формы
-                    event.preventDefault();
-                }
+                checkPlatformSelection(event); // Проверка перед отправкой формы
             });
         });
-
     </script>
+
 
     <div id="wordpress_options">
         <label>Дополнительные работы:</label><br>
@@ -406,7 +411,7 @@
 
     <div id="customer_id_container">
         <label for="customer_id">ID заказчика:</label>
-        <input type="number" id="customer_id" name="customer_id" required><br><br>
+        <input id="customer_id" name="customer_id" required><br><br>
     </div>
 
     <style>
