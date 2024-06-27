@@ -274,6 +274,8 @@ def process_contract(request):
         email = request.POST.get('email')
         customer_id = request.POST.get('customer_id')
 
+        choose_executor = request.POST.get('choose_executor')
+
         inn = request.POST.get('inn')
         ogrn = request.POST.get('ogrn')
         registration_address = request.POST.get('registration_address')
@@ -341,6 +343,7 @@ def process_contract(request):
             '{BANK_NAME}': bank_name,
             '{BIK}': bic,
             '{MONTH_COUNT}': month_count,
+            '{CHOOSE_EXECUTOR}': choose_executor,
         }
 
         for paragraph in doc.paragraphs:

@@ -267,6 +267,7 @@ def process_contract(request):
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
         red_organization_name = request.POST.get('red_organization_name')
+        choose_executor = request.POST.get('choose_executor')
 
         date_month = request.POST.get('date_month')
         date_year = request.POST.get('date_year')
@@ -369,6 +370,8 @@ def process_contract(request):
             '{CORRESPONDENT}': correspondent_account,
             '{BANK_NAME}': bank_name,
             '{BIK}': bic,
+            '{CHOOSE_EXECUTOR}': choose_executor,
+
         }
 
         for paragraph in doc.paragraphs:

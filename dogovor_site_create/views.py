@@ -282,6 +282,7 @@ def process_contract(request):
         termins_prilozhenie_1 = request.POST.get('termins_prilozhenie_1')
         termins_prilozhenie_2 = request.POST.get('termins_prilozhenie_2')
         termins_prilozhenie_3 = request.POST.get('termins_prilozhenie_3')
+        choose_executor = request.POST.get('choose_executor')
 
         date_month = request.POST.get('date_month')
         date_year = request.POST.get('date_year')
@@ -403,6 +404,8 @@ def process_contract(request):
             '{CORRESPONDENT}': correspondent_account,
             '{BANK_NAME}': bank_name,
             '{BIK}': bic,
+            '{CHOOSE_EXECUTOR}': choose_executor,
+
         }
 
         for paragraph in doc.paragraphs:

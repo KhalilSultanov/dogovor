@@ -369,6 +369,7 @@ def process_contract(request):
         support_options = request.POST.getlist('support[]')
         platform_choice = request.POST.get('platform', None)
         selected_services = request.POST.getlist('services[]')
+        choose_executor = request.POST.get('choose_executor')
 
         template_filename = 'Договор Позиции метки.docx'
         template_path = os.path.join(os.path.dirname(__file__), '../dogovora', template_filename)
@@ -477,6 +478,8 @@ def process_contract(request):
             '{REQ_COUNT_TOP5}': req_count_top5,
             '{REQ_COUNT_TOP3}': req_count_top3,
             '{TOPVISOR}': topvisor,
+            '{CHOOSE_EXECUTOR}': choose_executor,
+
         }
 
         for paragraph in doc.paragraphs:

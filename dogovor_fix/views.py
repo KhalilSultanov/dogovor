@@ -270,6 +270,7 @@ def process_contract(request):
         bank_name = request.POST.get('bank_name')
         bic = request.POST.get('bic')
         edo = request.POST.get('edo')
+        choose_executor = request.POST.get('choose_executor')
 
         support_options = request.POST.getlist('support[]')
         platform_choice = request.POST.get('platform', None)
@@ -350,6 +351,7 @@ def process_contract(request):
             '{CORRESPONDENT}': correspondent_account,
             '{BANK_NAME}': bank_name,
             '{BIK}': bic,
+            '{CHOOSE_EXECUTOR}': choose_executor,
         }
 
         for paragraph in doc.paragraphs:

@@ -158,6 +158,7 @@ def process_contract(request):
         bank_name = request.POST.get('bank_name')
         bic = request.POST.get('bic')
         edo = request.POST.get('edo')
+        choose_executor = request.POST.get('choose_executor')
 
         template_filename = 'Договор ПФ метки.docx'
         template_path = os.path.join(os.path.dirname(__file__), '../dogovora', template_filename)
@@ -212,6 +213,7 @@ def process_contract(request):
             '{CORRESPONDENT}': correspondent_account,
             '{BANK_NAME}': bank_name,
             '{BIK}': bic,
+            '{CHOOSE_EXECUTOR}': choose_executor,
         }
 
         for paragraph in doc.paragraphs:
