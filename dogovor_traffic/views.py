@@ -318,6 +318,64 @@ def process_contract(request):
         handle_search_engine(doc, search_engine_choice)
         replace_analytics_tags(doc, analitic_system, analitic_system_user, system_search)
 
+
+        if choose_executor == 'ИП Михайлов Дмитрий Сергеевич':
+            executor_name_replacement = 'Индивидуальный предприниматель Михайлов Дмитрий Сергеевич'
+            replacements_executor = {
+                '{CHOOSE_EXECUTOR_NAME}': 'Индивидуальный предприниматель Михайлов Дмитрий Сергеевич',
+                '{CHOOSE_EXECUTOR_INN}': '780256693210',
+                '{CHOOSE_EXECUTOR_OGRNIP}': '320784700136130',
+                '{CHOOSE_EXECUTOR_ADRESS}': '194295, Россия, г. Санкт-Петербург, пр-кт Северный, д. 24, корпус 1, кв. 33',
+                '{CHOOSE_EXECUTOR_CHECKING_ACC}': '40802810201500152101',
+                '{CHOOSE_EXECUTOR_KOR_ACC}': '30101810745374525104',
+                '{CHOOSE_EXECUTOR_BANK}': 'ООО "Банк Точка"',
+                '{CHOOSE_EXECUTOR_BIK}': '044525104',
+                '{CHOOSE_EXECUTOR_EMAIL}': 'dima@mikhaylovseo.ru'
+            }
+        elif choose_executor == 'ООО «МД»':
+            executor_name_replacement = 'Общество с ограниченной ответственностью "Михайлов Диджитал"'
+            replacements_executor = {
+                '{CHOOSE_EXECUTOR_NAME}': 'Общество с ограниченной ответственностью "Михайлов Диджитал"',
+                '{CHOOSE_EXECUTOR_INN}': '7810962062',
+                '{CHOOSE_EXECUTOR_OGRNIP}': '1247800061464',
+                '{CHOOSE_EXECUTOR_ADRESS}': '196142, Россия, г. Санкт-Петербург, ул. Пулковская, д. 2, корпус 1, литера А, оф 25, помещ. 66-Н',
+                '{CHOOSE_EXECUTOR_CHECKING_ACC}': '40702810320000118082',
+                '{CHOOSE_EXECUTOR_KOR_ACC}': '30101810745374525104',
+                '{CHOOSE_EXECUTOR_BANK}': 'ООО "Банк Точка"',
+                '{CHOOSE_EXECUTOR_BIK}': '044525104',
+                '{CHOOSE_EXECUTOR_EMAIL}': 'dima@mikhaylovseo.ru'
+            }
+        replace_tag_with_text(doc, '{CHOOSE_EXECUTOR_NAME}', executor_name_replacement)
+
+        for paragraph in doc.paragraphs:
+            for key, value in replacements_executor.items():
+                if key in paragraph.text:
+                    paragraph.text = paragraph.text.replace(key, value)
+                    for run in paragraph.runs:
+                        run.font.name = 'Calibri'
+                        run.font.size = Pt(9)
+
+        for table in doc.tables:
+            for row in table.rows:
+                for cell in row.cells:
+                    for paragraph in cell.paragraphs:
+                        for key, value in replacements_executor.items():
+                            if key in paragraph.text:
+                                paragraph.text = paragraph.text.replace(key, value)
+                                for run in paragraph.runs:
+                                    run.font.name = 'Calibri'
+                                    run.font.size = Pt(9)
+
+        for section in doc.sections:
+            footer = section.footer
+            for paragraph in footer.paragraphs:
+                for key, value in replacements_executor.items():
+                    if key in paragraph.text:
+                        paragraph.text = paragraph.text.replace(key, value)
+                        for run in paragraph.runs:
+                            run.font.name = 'Calibri'
+                            run.font.size = Pt(9)
+
         footer = doc.sections[0].footer
         for paragraph in footer.paragraphs:
             paragraph.alignment = 1

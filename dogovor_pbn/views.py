@@ -11,6 +11,8 @@ from docx.oxml.ns import nsdecls
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_COLOR_INDEX
 from docx.enum.table import WD_ALIGN_VERTICAL
 
+from dogovor_fix.views import replace_tag_with_text
+
 
 def remove_blank_line_between_points(doc, point1="3.1.", point2="3.2."):
     paragraphs = list(doc.paragraphs)
@@ -291,6 +293,64 @@ def process_contract(request):
         template_path = os.path.join(os.path.dirname(__file__), '../dogovora', template_filename)
         doc = Document(template_path)
         handle_conditional_sections(doc, predmet, site_creation, edo)
+
+        if choose_executor == 'ИП Михайлов Дмитрий Сергеевич':
+            executor_name_replacement = 'Индивидуальный предприниматель Михайлов Дмитрий Сергеевич'
+            replacements_executor = {
+                '{CHOOSE_EXECUTOR_NAME}': 'Индивидуальный предприниматель Михайлов Дмитрий Сергеевич',
+                '{CHOOSE_EXECUTOR_INN}': '780256693210',
+                '{CHOOSE_EXECUTOR_OGRNIP}': '320784700136130',
+                '{CHOOSE_EXECUTOR_ADRESS}': '194295, Россия, г. Санкт-Петербург, пр-кт Северный, д. 24, корпус 1, кв. 33',
+                '{CHOOSE_EXECUTOR_CHECKING_ACC}': '40802810201500152101',
+                '{CHOOSE_EXECUTOR_KOR_ACC}': '30101810745374525104',
+                '{CHOOSE_EXECUTOR_BANK}': 'ООО "Банк Точка"',
+                '{CHOOSE_EXECUTOR_BIK}': '044525104',
+                '{CHOOSE_EXECUTOR_EMAIL}': 'dima@mikhaylovseo.ru'
+            }
+        elif choose_executor == 'ООО «МД»':
+            executor_name_replacement = 'Общество с ограниченной ответственностью "Михайлов Диджитал"'
+            replacements_executor = {
+                '{CHOOSE_EXECUTOR_NAME}': 'Общество с ограниченной ответственностью "Михайлов Диджитал"',
+                '{CHOOSE_EXECUTOR_INN}': '7810962062',
+                '{CHOOSE_EXECUTOR_OGRNIP}': '1247800061464',
+                '{CHOOSE_EXECUTOR_ADRESS}': '196142, Россия, г. Санкт-Петербург, ул. Пулковская, д. 2, корпус 1, литера А, оф 25, помещ. 66-Н',
+                '{CHOOSE_EXECUTOR_CHECKING_ACC}': '40702810320000118082',
+                '{CHOOSE_EXECUTOR_KOR_ACC}': '30101810745374525104',
+                '{CHOOSE_EXECUTOR_BANK}': 'ООО "Банк Точка"',
+                '{CHOOSE_EXECUTOR_BIK}': '044525104',
+                '{CHOOSE_EXECUTOR_EMAIL}': 'dima@mikhaylovseo.ru'
+            }
+        replace_tag_with_text(doc, '{CHOOSE_EXECUTOR_NAME}', executor_name_replacement)
+
+        for paragraph in doc.paragraphs:
+            for key, value in replacements_executor.items():
+                if key in paragraph.text:
+                    paragraph.text = paragraph.text.replace(key, value)
+                    for run in paragraph.runs:
+                        run.font.name = 'Calibri'
+                        run.font.size = Pt(9)
+
+        for table in doc.tables:
+            for row in table.rows:
+                for cell in row.cells:
+                    for paragraph in cell.paragraphs:
+                        for key, value in replacements_executor.items():
+                            if key in paragraph.text:
+                                paragraph.text = paragraph.text.replace(key, value)
+                                for run in paragraph.runs:
+                                    run.font.name = 'Calibri'
+                                    run.font.size = Pt(9)
+
+        for section in doc.sections:
+            footer = section.footer
+            for paragraph in footer.paragraphs:
+                for key, value in replacements_executor.items():
+                    if key in paragraph.text:
+                        paragraph.text = paragraph.text.replace(key, value)
+                        for run in paragraph.runs:
+                            run.font.name = 'Calibri'
+                            run.font.size = Pt(9)
+
         signature_image_path = os.path.join(os.path.dirname(__file__), '../dogovora/podpis.jpg')
         if predmet == "DROP_SEARCH":
             remove_unnecessary_paragraphs(doc)
