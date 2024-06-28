@@ -318,14 +318,16 @@ def process_contract(request):
         handle_search_engine(doc, search_engine_choice)
         replace_analytics_tags(doc, analitic_system, analitic_system_user, system_search)
 
-
         if choose_executor == 'ИП Михайлов Дмитрий Сергеевич':
-            executor_name_replacement = 'Индивидуальный предприниматель Михайлов Дмитрий Сергеевич'
+            executor_name_replacement = ('Индивидуальный предприниматель Михайлов Дмитрий Сергеевич, именуемый в '
+                                         'дальнейшем «Исполнитель», в лице Михайлова Дмитрия Сергеевича, действующего '
+                                         'на основании Свидетельства ОГРНИП 320784700136130')
             replacements_executor = {
                 '{CHOOSE_EXECUTOR_NAME}': 'Индивидуальный предприниматель Михайлов Дмитрий Сергеевич',
                 '{CHOOSE_EXECUTOR_INN}': '780256693210',
-                '{CHOOSE_EXECUTOR_OGRNIP}': '320784700136130',
-                '{CHOOSE_EXECUTOR_ADRESS}': '194295, Россия, г. Санкт-Петербург, пр-кт Северный, д. 24, корпус 1, кв. 33',
+                '{CHOOSE_EXECUTOR_OGRNIP}': 'ОГРНИП: 320784700136130',
+                '{CHOOSE_EXECUTOR_ADRESS}': '194295, Россия, г. Санкт-Петербург, пр-кт Северный, д. 24, корпус 1, '
+                                            'кв. 33',
                 '{CHOOSE_EXECUTOR_CHECKING_ACC}': '40802810201500152101',
                 '{CHOOSE_EXECUTOR_KOR_ACC}': '30101810745374525104',
                 '{CHOOSE_EXECUTOR_BANK}': 'ООО "Банк Точка"',
@@ -333,12 +335,15 @@ def process_contract(request):
                 '{CHOOSE_EXECUTOR_EMAIL}': 'dima@mikhaylovseo.ru'
             }
         elif choose_executor == 'ООО «МД»':
-            executor_name_replacement = 'Общество с ограниченной ответственностью "Михайлов Диджитал"'
+            executor_name_replacement = ('Общество с ограниченной ответственностью "Михайлов Диджитал, именуемый в '
+                                         'дальнейшем «Исполнитель», в лице Михайлова Дмитрия Сергеевича, действующего '
+                                         'на основании Устава')
             replacements_executor = {
                 '{CHOOSE_EXECUTOR_NAME}': 'Общество с ограниченной ответственностью "Михайлов Диджитал"',
                 '{CHOOSE_EXECUTOR_INN}': '7810962062',
-                '{CHOOSE_EXECUTOR_OGRNIP}': '1247800061464',
-                '{CHOOSE_EXECUTOR_ADRESS}': '196142, Россия, г. Санкт-Петербург, ул. Пулковская, д. 2, корпус 1, литера А, оф 25, помещ. 66-Н',
+                '{CHOOSE_EXECUTOR_OGRNIP}': 'ОГРН: 1247800061464',
+                '{CHOOSE_EXECUTOR_ADRESS}': '196142, Россия, г. Санкт-Петербург, ул. Пулковская, д. 2, корпус 1, '
+                                            'литера А, оф 25, помещ. 66-Н',
                 '{CHOOSE_EXECUTOR_CHECKING_ACC}': '40702810320000118082',
                 '{CHOOSE_EXECUTOR_KOR_ACC}': '30101810745374525104',
                 '{CHOOSE_EXECUTOR_BANK}': 'ООО "Банк Точка"',
