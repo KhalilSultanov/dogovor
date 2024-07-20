@@ -13,6 +13,43 @@ from docx.enum.table import WD_ALIGN_VERTICAL
 
 from dogovor_fix.views import replace_tag_with_text
 
+def make_text_bold_in_doc(doc, search_text):
+    for paragraph in doc.paragraphs:
+        if search_text in paragraph.text:
+            runs = paragraph.runs
+            for run in runs:
+                if search_text in run.text:
+                    split_text = run.text.split(search_text)
+                    run.text = split_text[0]
+                    bold_run = paragraph.add_run(search_text)
+                    bold_run.bold = True
+                    bold_run.font.name = 'Calibri'
+                    bold_run.font.size = Pt(9)
+                    if len(split_text) > 1:
+                        after_bold_run = paragraph.add_run(split_text[1])
+                        after_bold_run.font.name = 'Calibri'
+                        after_bold_run.font.size = Pt(9)
+
+    for table in doc.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                for paragraph in cell.paragraphs:
+                    if search_text in paragraph.text:
+                        runs = paragraph.runs
+                        for run in runs:
+                            if search_text in run.text:
+                                # Split the run text if it contains the search_text
+                                split_text = run.text.split(search_text)
+                                run.text = split_text[0]
+                                bold_run = paragraph.add_run(search_text)
+                                bold_run.bold = True
+                                bold_run.font.name = 'Calibri'
+                                bold_run.font.size = Pt(9)
+                                if len(split_text) > 1:
+                                    after_bold_run = paragraph.add_run(split_text[1])
+                                    after_bold_run.font.name = 'Calibri'
+                                    after_bold_run.font.size = Pt(9)
+
 
 def remove_blank_line_between_points(doc, point1="3.1.", point2="3.2."):
     paragraphs = list(doc.paragraphs)
@@ -110,8 +147,6 @@ def update_section_numbers(doc):
             replace_paragraph_text_with_styles(paragraph, updated_text)
 
 
-
-
 def handle_conditional_sections(doc, predmet, site_creator, edo):
     edo_text_1 = "(в том числе его получения с использованием системы электронного документооборота)" if edo == "YES" else ""
     edo_text_2 = (
@@ -193,15 +228,30 @@ def replace_placeholder_with_image(doc, placeholder, image_path):
                     break
 
 
+def replace_text_with_styles(paragraph, replacements_executor):
+    for key, value in replacements_executor.items():
+        if key in paragraph.text:
+            runs = paragraph.runs
+            full_text = ''.join(run.text for run in runs)
+            split_text = full_text.split(key)
+            for run in runs:
+                run.text = ""
+            paragraph.add_run(split_text[0])
+            new_run = paragraph.add_run(value)
+            new_run.bold = True  # Set the new text to bold
+            new_run.font.name = 'Calibri'
+            new_run.font.size = Pt(9)
+            if len(split_text) > 1:
+                paragraph.add_run(split_text[1])
+
+
 def set_cell_formatting(cell, font_size=Pt(9), font_name='Calibri'):
-    """ Apply formatting to cell text. """
     cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
     for paragraph in cell.paragraphs:
         paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
         for run in paragraph.runs:
             run.font.size = font_size
             run.font.name = font_name
-
 
 
 def replace_underscores_with_signature(doc, placeholder_text, signature_path):
@@ -238,12 +288,10 @@ def replace_underscores_with_signature(doc, placeholder_text, signature_path):
             replace_in_paragraph(paragraph)
 
 def find_and_offset_director_text(doc):
-    # Обход всех параграфов
     for paragraph in doc.paragraphs:
         if "________________{FIO_DIRECTOR}" in paragraph.text:
             paragraph.text = "\n\n\n" + paragraph.text
 
-    # Обход всех секций (header и footer)
     for section in doc.sections:
         for header in section.header.paragraphs:
             if "________________{FIO_DIRECTOR}" in header.text:
@@ -252,7 +300,6 @@ def find_and_offset_director_text(doc):
             if "________________{FIO_DIRECTOR}" in footer.text:
                 footer.text = "\n\n\n" + footer.text
 
-    # Обход всех таблиц
     for table in doc.tables:
         for row in table.rows:
             for cell in row.cells:
@@ -311,7 +358,7 @@ def process_contract(request):
                 '{CHOOSE_EXECUTOR_EMAIL}': 'dima@mikhaylovseo.ru'
             }
         elif choose_executor == 'ООО «МД»':
-            executor_name_replacement = ('Общество с ограниченной ответственностью "Михайлов Диджитал, именуемый в '
+            executor_name_replacement = ('Общество с ограниченной ответственностью "Михайлов Диджитал", именуемый в '
                                          'дальнейшем «Исполнитель», в лице Михайлова Дмитрия Сергеевича, действующего '
                                          'на основании Устава')
             replacements_executor = {
@@ -326,6 +373,7 @@ def process_contract(request):
                 '{CHOOSE_EXECUTOR_BIK}': '044525104',
                 '{CHOOSE_EXECUTOR_EMAIL}': 'dima@mikhaylovseo.ru'
             }
+
         replace_tag_with_text(doc, '{CHOOSE_EXECUTOR_NAME}', executor_name_replacement)
 
         for paragraph in doc.paragraphs:
@@ -362,7 +410,6 @@ def process_contract(request):
             remove_unnecessary_paragraphs(doc)
             update_section_numbers(doc)
             adjust_paragraph_spacing(doc)
-
 
         footer = doc.sections[0].footer
         for paragraph in footer.paragraphs:
@@ -442,6 +489,11 @@ def process_contract(request):
                 for run in paragraph.runs:
                     run.font.name = 'Calibri'
                     run.font.size = Pt(9)
+
+        text = organization_name
+        make_text_bold_in_doc(doc, text)
+        make_text_bold_in_doc(doc,'Индивидуальный предприниматель Михайлов Дмитрий Сергеевич')
+        make_text_bold_in_doc(doc,'Общество с ограниченной ответственностью "Михайлов Диджитал"')
 
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
         response['Content-Disposition'] = 'attachment; filename="processed_contract.docx"'

@@ -7,6 +7,47 @@ from docx.shared import Pt, Inches
 from num2words import num2words
 
 
+from docx.shared import Pt
+
+def make_text_bold_in_doc(doc, search_text):
+    for paragraph in doc.paragraphs:
+        if search_text in paragraph.text:
+            runs = paragraph.runs
+            for run in runs:
+                if search_text in run.text:
+                    split_text = run.text.split(search_text)
+                    run.text = split_text[0]
+                    bold_run = paragraph.add_run(search_text)
+                    bold_run.bold = True
+                    bold_run.font.name = 'Calibri'
+                    bold_run.font.size = Pt(9)
+                    if len(split_text) > 1:
+                        after_bold_run = paragraph.add_run(split_text[1])
+                        after_bold_run.font.name = 'Calibri'
+                        after_bold_run.font.size = Pt(9)
+
+    for table in doc.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                for paragraph in cell.paragraphs:
+                    if search_text in paragraph.text:
+                        runs = paragraph.runs
+                        for run in runs:
+                            if search_text in run.text:
+                                # Split the run text if it contains the search_text
+                                split_text = run.text.split(search_text)
+                                run.text = split_text[0]
+                                bold_run = paragraph.add_run(search_text)
+                                bold_run.bold = True
+                                bold_run.font.name = 'Calibri'
+                                bold_run.font.size = Pt(9)
+                                if len(split_text) > 1:
+                                    after_bold_run = paragraph.add_run(split_text[1])
+                                    after_bold_run.font.name = 'Calibri'
+                                    after_bold_run.font.size = Pt(9)
+
+
+
 def replace_paragraph_text_with_styles(paragraph, new_text):
     """
     Заменяет текст в абзаце, сохраняя исходное форматирование.
@@ -128,7 +169,6 @@ def replace_tag_with_text(doc, tag, text=None):
             if new_text:
                 replace_paragraph_text_with_styles(paragraph, new_text)
             else:
-                # Если параграф остался пустым, удаляем его
                 p = paragraph._element
                 p.getparent().remove(p)
                 p._p = p._element = None
@@ -140,10 +180,8 @@ def replace_underscores_with_signature(doc, placeholder_text, signature_path):
         full_text = ''.join(run.text for run in runs)
         if placeholder_text in full_text:
             split_text = full_text.split(placeholder_text)
-            # Clear existing runs
             for run in runs:
                 run.text = ""
-            # Add new runs with the signature and styled text
             paragraph.add_run(split_text[0])
             paragraph.add_run().add_picture(signature_path, width=Inches(0.8))
             run = paragraph.add_run("Михайлов Д.С.")
@@ -321,7 +359,7 @@ def process_contract(request):
                 '{CHOOSE_EXECUTOR_EMAIL}': 'dima@mikhaylovseo.ru'
             }
         elif choose_executor == 'ООО «МД»':
-            executor_name_replacement = ('Общество с ограниченной ответственностью "Михайлов Диджитал, именуемый в '
+            executor_name_replacement = ('Общество с ограниченной ответственностью "Михайлов Диджитал", именуемый в '
                                          'дальнейшем «Исполнитель», в лице Михайлова Дмитрия Сергеевича, действующего '
                                          'на основании Устава')
             replacements_executor = {
@@ -447,6 +485,11 @@ def process_contract(request):
                 for run in paragraph.runs:
                     run.font.name = 'Calibri'
                     run.font.size = Pt(9)
+
+        text = organization_name
+        make_text_bold_in_doc(doc, text)
+        make_text_bold_in_doc(doc, 'Индивидуальный предприниматель Михайлов Дмитрий Сергеевич')
+        make_text_bold_in_doc(doc, 'Общество с ограниченной ответственностью "Михайлов Диджитал"')
 
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
         response['Content-Disposition'] = 'attachment; filename="processed_contract.docx"'
