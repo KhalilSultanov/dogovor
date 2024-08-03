@@ -1,9 +1,13 @@
 import os
+from datetime import datetime
+
 from django.http import HttpResponse
 from django.shortcuts import render
 from docx import Document
 from docx.enum.text import WD_COLOR_INDEX
 from docx.shared import Pt, Inches
+from num2words import num2words
+
 
 def make_text_bold_in_doc(doc, search_text):
     for paragraph in doc.paragraphs:
@@ -289,8 +293,6 @@ def process_contract(request):
         date_day = request.POST.get('date_day')
         site_name = request.POST.get('site_name')
 
-        price_count_digit = request.POST.get('price_count_digit')
-        price_count_word = request.POST.get('price_count_word')
         search_engine_choice = request.POST.get('search_engine', None)
         customer_id = request.POST.get('customer_id')
 
@@ -300,16 +302,31 @@ def process_contract(request):
         system_search = request.POST.getlist('search_system')
 
         pay_for_site = request.POST.get('pay_for_site')
+        pay_for_site_in_words = num2words(pay_for_site, lang='ru')
+
+
         prime = request.POST.get('prime')
         visit_count = request.POST.get('visit_count')
+
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
+
+        start_date_formatted = datetime.strptime(start_date, '%Y-%m-%d').strftime('%d.%m.%Y')
+        end_date_formatted = datetime.strptime(end_date, '%Y-%m-%d').strftime('%d.%m.%Y')
+
         red_organization_name = request.POST.get('red_organization_name')
         choose_executor = request.POST.get('choose_executor')
 
         date_month = request.POST.get('date_month')
         date_year = request.POST.get('date_year')
+
         organization_name = request.POST.get('organization_name')
+
+        if organization_name.startswith('Индивидуальный предприниматель'):
+            organization_name += ', именуемый'
+        elif organization_name.startswith('ООО'):
+            organization_name += ', именуемое'
+
         reason = request.POST.get('reason')
         person_name = request.POST.get('person_name')
         director_name = request.POST.get('director_name')
@@ -357,8 +374,12 @@ def process_contract(request):
         replace_analytics_tags(doc, analitic_system, analitic_system_user, system_search)
 
         if choose_executor == 'ИП Михайлов Дмитрий Сергеевич':
+            replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'адаптации и оптимизации web-страниц сайта')
+            replace_tag_with_text(doc, '{PREDMET_DOGOVORA2}', 'услуг Исполнителя по адаптации и оптимизации web-страниц для повышения посещаемости Интернет-сайта')
+            replace_tag_with_text(doc, '{PREDMET_DOGOVORA3}', 'работ по повышению посещаемости Интернет-сайта')
             executor_name_replacement = ('Индивидуальный предприниматель Михайлов Дмитрий Сергеевич, именуемый в '
-                                         'дальнейшем «Исполнитель», в лице Михайлова Дмитрия Сергеевича, действующего '
+                                         'дальнейшем «Исполнитель», в лице генерального директора Михайлова Дмитрия '
+                                         'Сергеевича, действующего'
                                          'на основании Свидетельства ОГРНИП 320784700136130')
             replacements_executor = {
                 '{CHOOSE_EXECUTOR_NAME}': 'Индивидуальный предприниматель Михайлов Дмитрий Сергеевич',
@@ -373,8 +394,12 @@ def process_contract(request):
                 '{CHOOSE_EXECUTOR_EMAIL}': 'dima@mikhaylovseo.ru'
             }
         elif choose_executor == 'ООО «МД»':
-            executor_name_replacement = ('Общество с ограниченной ответственностью "Михайлов Диджитал", именуемый в '
-                                         'дальнейшем «Исполнитель», в лице Михайлова Дмитрия Сергеевича, действующего '
+            replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'рекламным услугам по продвижению сайта')
+            replace_tag_with_text(doc, '{PREDMET_DOGOVORA2}', 'рекламных услуг Исполнителя по продвижению сайта')
+            replace_tag_with_text(doc, '{PREDMET_DOGOVORA3}', 'оплата рекламных услуг Исполнителя по пролдвижению сайта осуществляется Заказчиком')
+            executor_name_replacement = ('Общество с ограниченной ответственностью "Михайлов Диджитал", именуемое в '
+                                         'дальнейшем «Исполнитель», в лице генерального директора Михайлова Дмитрия '
+                                         'Сергеевича, действующего'
                                          'на основании Устава')
             replacements_executor = {
                 '{CHOOSE_EXECUTOR_NAME}': 'Общество с ограниченной ответственностью "Михайлов Диджитал"',
@@ -450,13 +475,12 @@ def process_contract(request):
             '{DOGOVOR_OSNOVANIE}': reason,
 
             '{SITE_NAME}': site_name,
-            '{PRICE_COUNT}': price_count_digit,
-            '{PRICE_COUNT_IN_WORDS}': price_count_word,
             '{PAY_FOR_SITE}': pay_for_site,
+            '{PAY_FOR_SITE_IN_WORDS}': pay_for_site_in_words,
             '{PAY_FOR_ONCE}': prime,
             '{VISIT_COUNT}': visit_count,
-            '{START}': start_date,
-            '{END}': end_date,
+            '{START}': start_date_formatted,
+            '{END}': end_date_formatted,
 
             '{FIO_DIRECTOR}': director_name,
             '{CUSTOMER_EMAIL}': email,

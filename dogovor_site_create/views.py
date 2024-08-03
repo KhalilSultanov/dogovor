@@ -324,7 +324,14 @@ def process_contract(request):
 
         date_month = request.POST.get('date_month')
         date_year = request.POST.get('date_year')
+
         organization_name = request.POST.get('organization_name')
+
+        if organization_name.startswith('Индивидуальный предприниматель'):
+            organization_name += ', именуемый'
+        elif organization_name.startswith('ООО'):
+            organization_name += ', именуемое'
+
         reason = request.POST.get('reason')
         person_name = request.POST.get('person_name')
         director_name = request.POST.get('director_name')
@@ -372,7 +379,8 @@ def process_contract(request):
 
         if choose_executor == 'ИП Михайлов Дмитрий Сергеевич':
             executor_name_replacement = ('Индивидуальный предприниматель Михайлов Дмитрий Сергеевич, именуемый в '
-                                         'дальнейшем «Исполнитель», в лице Михайлова Дмитрия Сергеевича, действующего '
+                                         'дальнейшем «Исполнитель», в лице генерального директора Михайлова Дмитрия '
+                                         'Сергеевича, действующего'
                                          'на основании Свидетельства ОГРНИП 320784700136130')
             replacements_executor = {
                 '{CHOOSE_EXECUTOR_NAME}': 'Индивидуальный предприниматель Михайлов Дмитрий Сергеевич',
@@ -388,7 +396,8 @@ def process_contract(request):
             }
         elif choose_executor == 'ООО «МД»':
             executor_name_replacement = ('Общество с ограниченной ответственностью "Михайлов Диджитал", именуемый в '
-                                         'дальнейшем «Исполнитель», в лице Михайлова Дмитрия Сергеевича, действующего '
+                                         'дальнейшем «Исполнитель», в лице генерального директора Михайлова Дмитрия '
+                                         'Сергеевича, действующего'
                                          'на основании Устава')
             replacements_executor = {
                 '{CHOOSE_EXECUTOR_NAME}': 'Общество с ограниченной ответственностью "Михайлов Диджитал"',

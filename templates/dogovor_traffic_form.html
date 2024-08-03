@@ -353,7 +353,7 @@
     </div>
     <br>
 
-    <label for="pay_for_site">Ежемесячная оплата:</label>
+    <label for="pay_for_site">Ежемесячная оплата в цифрах:</label>
     <input type="number" id="pay_for_site" name="pay_for_site" required><br><br>
 
 
@@ -366,8 +366,42 @@
 
     <label for="end_date">по:</label>
     <input type="date" id="end_date" name="end_date" required><br><br>
+    
+     <script>
+        function formatDateToBackend(date) {
+            const [day, month, year] = date.split('.');
+            return `${year}-${month}-${day}`;
+        }
 
+        function formatDateToDisplay(date) {
+            const [year, month, day] = date.split('-');
+            return `${day}.${month}.${year}`;
+        }
 
+        document.getElementById('dateForm').addEventListener('submit', function(event) {
+            const startDateInput = document.getElementById('start_date');
+            const endDateInput = document.getElementById('end_date');
+
+            // Преобразуем даты в формат ГГГГ-ММ-ДД перед отправкой
+            startDateInput.value = formatDateToBackend(startDateInput.value);
+            endDateInput.value = formatDateToBackend(endDateInput.value);
+        });
+
+        document.getElementById('start_date').addEventListener('focusout', function(event) {
+            const input = event.target;
+            if (input.value && !input.value.includes('-')) {
+                input.value = formatDateToBackend(input.value);
+            }
+        });
+
+        document.getElementById('end_date').addEventListener('focusout', function(event) {
+            const input = event.target;
+            if (input.value && !input.value.includes('-')) {
+                input.value = formatDateToBackend(input.value);
+            }
+        });
+    </script>
+    
     <label for="visit_count">Количество посещений за период:</label>
     <input type="number" id="visit_count" name="visit_count" required><br><br>
 
@@ -444,7 +478,9 @@
 
     <label for="bic">БИК:</label>
     <input type="text" id="bic" name="bic" pattern="\d{9}" title="БИК должен содержать 9 цифр" required><br><br>
-
+    
+{#    <label for="brand_traffic_percentage">Процент брендового трафика:</label>#}
+{#    <input type="number" id="brand_traffic_percentage" name="brand_traffic_percentage" step="0.01" required><br><br>#}
 
     <input type="submit" value="Скачать договор">
 </form>

@@ -382,7 +382,14 @@ def process_contract(request):
 
         date_month = request.POST.get('date_month')
         date_year = request.POST.get('date_year')
+
         organization_name = request.POST.get('organization_name')
+
+        if organization_name.startswith('Индивидуальный предприниматель'):
+            organization_name += ', именуемый'
+        elif organization_name.startswith('ООО'):
+            organization_name += ', именуемое'
+
         red_organization_name = request.POST.get('red_organization_name')
 
         reason = request.POST.get('reason')
@@ -415,8 +422,10 @@ def process_contract(request):
         signature_image_path = os.path.join(os.path.dirname(__file__), '../dogovora/podpis.jpg')
 
         if choose_executor == 'ИП Михайлов Дмитрий Сергеевич':
+            replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'адаптации и оптимизации web-страниц')
             executor_name_replacement = ('Индивидуальный предприниматель Михайлов Дмитрий Сергеевич, именуемый в '
-                                         'дальнейшем «Исполнитель», в лице Михайлова Дмитрия Сергеевича, действующего '
+                                         'дальнейшем «Исполнитель», в лице генерального директора Михайлова Дмитрия '
+                                         'Сергеевича, действующего'
                                          'на основании Свидетельства ОГРНИП 320784700136130')
             replacements_executor = {
                 '{CHOOSE_EXECUTOR_NAME}': 'Индивидуальный предприниматель Михайлов Дмитрий Сергеевич',
@@ -431,8 +440,10 @@ def process_contract(request):
                 '{CHOOSE_EXECUTOR_EMAIL}': 'dima@mikhaylovseo.ru'
             }
         elif choose_executor == 'ООО «МД»':
+            replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'рекламным услугам по продвижению')
             executor_name_replacement = ('Общество с ограниченной ответственностью "Михайлов Диджитал", именуемый в '
-                                         'дальнейшем «Исполнитель», в лице Михайлова Дмитрия Сергеевича, действующего '
+                                         'дальнейшем «Исполнитель», в лице генерального директора Михайлова Дмитрия '
+                                         'Сергеевича, действующего'
                                          'на основании Устава')
             replacements_executor = {
                 '{CHOOSE_EXECUTOR_NAME}': 'Общество с ограниченной ответственностью "Михайлов Диджитал"',

@@ -4,6 +4,7 @@ from django.shortcuts import render
 from docx import Document
 from docx.enum.text import WD_COLOR_INDEX
 from docx.shared import Pt, Inches
+from num2words import num2words
 
 
 def make_text_bold_in_doc(doc, search_text):
@@ -176,11 +177,20 @@ def process_contract(request):
         site_name = request.POST.get('site_name')
 
         price_count = request.POST.get('price_count')
+        price_count_in_words = num2words(price_count, lang='ru')
+
         link = request.POST.get('link')
 
         date_month = request.POST.get('date_month')
         date_year = request.POST.get('date_year')
+
         organization_name = request.POST.get('organization_name')
+
+        if organization_name.startswith('Индивидуальный предприниматель'):
+            organization_name += ', именуемый'
+        elif organization_name.startswith('ООО'):
+            organization_name += ', именуемое'
+
         red_organization_name = request.POST.get('red_organization_name')
         customer_id = request.POST.get('customer_id')
 
@@ -206,8 +216,10 @@ def process_contract(request):
         handle_conditional_sections(doc, edo)
 
         if choose_executor == 'ИП Михайлов Дмитрий Сергеевич':
+            replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'адаптации и оптимизации web-страниц')
             executor_name_replacement = ('Индивидуальный предприниматель Михайлов Дмитрий Сергеевич, именуемый в '
-                                         'дальнейшем «Исполнитель», в лице Михайлова Дмитрия Сергеевича, действующего '
+                                         'дальнейшем «Исполнитель», в лице генерального директора Михайлова Дмитрия '
+                                         'Сергеевича, действующего'
                                          'на основании Свидетельства ОГРНИП 320784700136130')
             replacements_executor = {
                 '{CHOOSE_EXECUTOR_NAME}': 'Индивидуальный предприниматель Михайлов Дмитрий Сергеевич',
@@ -222,8 +234,10 @@ def process_contract(request):
                 '{CHOOSE_EXECUTOR_EMAIL}': 'dima@mikhaylovseo.ru'
             }
         elif choose_executor == 'ООО «МД»':
+            replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'рекламным услугам по продвижению')
             executor_name_replacement = ('Общество с ограниченной ответственностью "Михайлов Диджитал", именуемый в '
-                                         'дальнейшем «Исполнитель», в лице Михайлова Дмитрия Сергеевича, действующего '
+                                         'дальнейшем «Исполнитель», в лице генерального директора Михайлова Дмитрия '
+                                         'Сергеевича, действующего'
                                          'на основании Устава')
             replacements_executor = {
                 '{CHOOSE_EXECUTOR_NAME}': 'Общество с ограниченной ответственностью "Михайлов Диджитал"',
@@ -285,7 +299,7 @@ def process_contract(request):
             replace_underscores_with_signature(doc, "________________Михайлов Д.С.", signature_image_path)
             find_and_offset_director_text(doc)
             run = paragraph.add_run()
-            run.add_picture(signature_image_path, width=Inches(0.8))  # Настройте ширину по необходимости
+            run.add_picture(signature_image_path, width=Inches(0.8))
             paragraph.add_run("Михайлов Д.С.").font.size = Pt(12)
 
         replacements = {
@@ -301,6 +315,7 @@ def process_contract(request):
 
             '{SITE_NAME}': site_name,
             '{PRICE_COUNT}': price_count,
+            '{PRICE_COUNT_IN_WORDS}': price_count_in_words,
             '{LINK}': link,
             '{CUSTOMER_ID}': customer_id,
 
