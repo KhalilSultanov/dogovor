@@ -322,6 +322,8 @@ def process_contract(request):
 
         organization_name = request.POST.get('organization_name')
 
+        brand_traffic_percentage = request.POST.get('brand_traffic_percentage')
+
         if organization_name.startswith('Индивидуальный предприниматель'):
             organization_name += ', именуемый'
         elif organization_name.startswith('ООО'):
@@ -496,6 +498,7 @@ def process_contract(request):
             '{BANK_NAME}': bank_name,
             '{BIK}': bic,
             '{CHOOSE_EXECUTOR}': choose_executor,
+            '{BRAND_TRAFFIC_PERCENTAGE}': brand_traffic_percentage
 
         }
 
