@@ -14,14 +14,16 @@ from docx.enum.table import WD_ALIGN_VERTICAL
 from dogovor_fix.views import replace_tag_with_text
 
 def make_text_bold_in_doc(doc, search_text):
+    main_text = search_text.split(", именуемое")[0]  # Основная часть текста до ", именуемое"
+
     for paragraph in doc.paragraphs:
-        if search_text in paragraph.text:
+        if main_text in paragraph.text:
             runs = paragraph.runs
             for run in runs:
-                if search_text in run.text:
-                    split_text = run.text.split(search_text)
+                if main_text in run.text:
+                    split_text = run.text.split(main_text, 1)
                     run.text = split_text[0]
-                    bold_run = paragraph.add_run(search_text)
+                    bold_run = paragraph.add_run(main_text)
                     bold_run.bold = True
                     bold_run.font.name = 'Calibri'
                     bold_run.font.size = Pt(9)
@@ -30,18 +32,18 @@ def make_text_bold_in_doc(doc, search_text):
                         after_bold_run.font.name = 'Calibri'
                         after_bold_run.font.size = Pt(9)
 
+    # Повторение для таблиц
     for table in doc.tables:
         for row in table.rows:
             for cell in row.cells:
                 for paragraph in cell.paragraphs:
-                    if search_text in paragraph.text:
+                    if main_text in paragraph.text:
                         runs = paragraph.runs
                         for run in runs:
-                            if search_text in run.text:
-                                # Split the run text if it contains the search_text
-                                split_text = run.text.split(search_text)
+                            if main_text in run.text:
+                                split_text = run.text.split(main_text, 1)
                                 run.text = split_text[0]
-                                bold_run = paragraph.add_run(search_text)
+                                bold_run = paragraph.add_run(main_text)
                                 bold_run.bold = True
                                 bold_run.font.name = 'Calibri'
                                 bold_run.font.size = Pt(9)
@@ -367,7 +369,7 @@ def process_contract(request):
         elif choose_executor == 'ООО «МД»':
             executor_name_replacement = ('Общество с ограниченной ответственностью "Михайлов Диджитал", именуемый в '
                                          'дальнейшем «Исполнитель», в лице генерального директора Михайлова Дмитрия '
-                                         'Сергеевича, действующего'
+                                         'Сергеевича, действующего '
                                          'на основании Устава')
             replacements_executor = {
                 '{CHOOSE_EXECUTOR_NAME}': 'Общество с ограниченной ответственностью "Михайлов Диджитал"',
