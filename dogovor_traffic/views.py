@@ -377,7 +377,7 @@ def process_contract(request):
         replace_analytics_tags(doc, analitic_system, analitic_system_user, system_search)
 
         if choose_executor == 'ИП Михайлов Дмитрий Сергеевич':
-            replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'адаптации и оптимизации web-страниц сайта')
+            replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'оказать услуги по адаптации и оптимизации web-страниц сайта')
             replace_tag_with_text(doc, '{PREDMET_DOGOVORA2}',
                                   'услуг Исполнителя по адаптации и оптимизации web-страниц для повышения посещаемости Интернет-сайта')
             replace_tag_with_text(doc, '{PREDMET_DOGOVORA3}', 'работ по повышению посещаемости Интернет-сайта')
@@ -398,7 +398,7 @@ def process_contract(request):
                 '{CHOOSE_EXECUTOR_EMAIL}': 'dima@mikhaylovseo.ru'
             }
         elif choose_executor == 'ООО «МД»':
-            replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'рекламным услугам по продвижению сайта')
+            replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'оказать рекламные услуги по продвижению сайта')
             replace_tag_with_text(doc, '{PREDMET_DOGOVORA2}', 'рекламных услуг Исполнителя по продвижению сайта')
             replace_tag_with_text(doc, '{PREDMET_DOGOVORA3}', ' рекламных услуг Исполнителя по продвижению сайта ')
             executor_name_replacement = ('Общество с ограниченной ответственностью "Михайлов Диджитал", именуемое в '

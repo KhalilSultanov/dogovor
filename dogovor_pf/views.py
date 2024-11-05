@@ -218,7 +218,7 @@ def process_contract(request):
         handle_conditional_sections(doc, edo)
 
         if choose_executor == 'ИП Михайлов Дмитрий Сергеевич':
-            replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'адаптации и оптимизации web-страниц')
+            replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'услуги по адаптации и оптимизации web-страниц')
             executor_name_replacement = ('Индивидуальный предприниматель Михайлов Дмитрий Сергеевич, именуемый в '
                                          'дальнейшем «Исполнитель», в лице Михайлова Дмитрия '
                                          'Сергеевича, действующего'
@@ -236,7 +236,7 @@ def process_contract(request):
                 '{CHOOSE_EXECUTOR_EMAIL}': 'dima@mikhaylovseo.ru'
             }
         elif choose_executor == 'ООО «МД»':
-            replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'рекламным услугам по продвижению')
+            replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'рекламные услуги по продвижению')
             executor_name_replacement = ('Общество с ограниченной ответственностью "Михайлов Диджитал", именуемый в '
                                          'дальнейшем «Исполнитель», в лице генерального директора Михайлова Дмитрия '
                                          'Сергеевича, действующего '

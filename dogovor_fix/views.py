@@ -349,7 +349,7 @@ def process_contract(request):
         replace_analytics_tags(doc, analitic_system, analitic_system_user, system_search)
 
         if choose_executor == 'ИП Михайлов Дмитрий Сергеевич':
-            replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'адаптации и оптимизации web-страниц')
+            replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'по адаптации и оптимизации web-страниц')
             executor_name_replacement = ('Индивидуальный предприниматель Михайлов Дмитрий Сергеевич, именуемый в '
                                          'дальнейшем «Исполнитель», в лице генерального директора Михайлова Дмитрия '
                                          'Сергеевича, действующего'
