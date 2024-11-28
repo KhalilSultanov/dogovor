@@ -85,7 +85,7 @@
         <option value="ИП Михайлов Дмитрий Сергеевич">ИП Михайлов Дмитрий Сергеевич</option>
         <option value="ООО «МД»">ООО «МД»</option>
     </select><br><br>
-    
+
     <label for="month">Месяц:</label>
     <select id="month" name="date_month" onchange="updateDays()" required>
         <option value="января">Январь</option>
@@ -383,6 +383,11 @@
     </div>
     <br>
 
+    <label for="guarantee">Гарантия:</label><br>
+    <input type="radio" id="with_guarantee" name="guarantee" value="with_guarantee" required>
+    <label for="with_guarantee">С гарантией</label><br>
+    <input type="radio" id="without_guarantee" name="guarantee" value="without_guarantee">
+    <label for="without_guarantee">Без гарантии</label><br><br>
 
     <label for="site_name">Стоимость работ цифрами:</label>
     <label for="price_count_digit"></label><input type="number" id="price_count_digit" name="price_count_digit"><br><br>
@@ -434,7 +439,7 @@
             toggleCustomerIdField(); // Initial check
         });
     </script>
-    
+
     <label for="inn">ИНН:</label>
     <input type="text" id="inn" name="inn" pattern="\d{10}|\d{12}" title="ИНН должен содержать 10 или 12 цифр" required><br><br>
 

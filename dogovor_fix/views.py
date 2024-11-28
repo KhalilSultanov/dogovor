@@ -6,8 +6,113 @@ from docx.enum.text import WD_COLOR_INDEX
 from docx.shared import Pt, Inches
 from num2words import num2words
 
+from docx.shared import Pt
 
 from docx.shared import Pt
+
+from docx.shared import Pt
+from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
+from docx.text.paragraph import Paragraph
+
+
+def insert_paragraph_after(paragraph, text=None, style=None):
+    new_p = OxmlElement("w:p")
+    paragraph._p.addnext(new_p)
+    new_paragraph = Paragraph(new_p, paragraph._parent)
+    if text:
+        run = new_paragraph.add_run(text)
+        run.font.name = 'Calibri'
+        run.font.size = Pt(9)
+    if style:
+        new_paragraph.style = style
+    return new_paragraph
+
+
+def add_guarantee_section(doc):
+    # Флаг, который указывает, что мы находимся внутри раздела 4
+    in_section_4 = False
+
+    # Текст новых пунктов
+    new_section_header = '4. Ключевые фразы и гарантия'
+    new_point_4_4 = '4.4. Гарантией выполненных работ является вывод в топ-10 поисковой сети Яндекс не менее 30% запросов, указанных в Приложении №1, в течение 6 (шести) месяцев работ.'
+    new_point_4_5 = '4.5. При невыполнении гарантийных обязательств, Исполнитель предоставляет 7 (седьмой) месяц работ бесплатно.'
+    new_point_4_6 = '''4.6. Условия гарантии являются недействительными в случаях:
+- действий или бездействий поисковых систем, хостинга, системы сайта – для этого важно настраивать журнал логов;
+- форс-мажорных обстоятельств, указанных в п. 8 настоящего Договора;
+- работ Заказчика и третьих лиц на сайте без согласования с Исполнителем;
+- смены стратегии по инициативе Заказчика;
+- несоблюдения/несвоевременного соблюдения выполнения Заказчиком данных Исполнителем рекомендаций по п.1.4. настоящего Договора.'''
+
+    paragraphs = doc.paragraphs
+    i = 0
+    while i < len(paragraphs):
+        paragraph = paragraphs[i]
+        text = paragraph.text.strip()
+
+        if text.startswith('4. '):
+            # Находим заголовок раздела 4 и заменяем его
+            paragraph.clear()
+            run = paragraph.add_run(new_section_header)
+            run.font.name = 'Calibri'
+            run.font.size = Pt(9)
+            run.bold = True
+            in_section_4 = True
+            i += 1
+            continue
+
+        if in_section_4:
+            if text.startswith('5. '):
+                # Дошли до раздела 5, выходим из раздела 4
+                in_section_4 = False
+                i += 1
+                continue
+
+            if text.startswith('4.4. '):
+                # Заменяем пункт 4.4 и добавляем новые пункты
+                paragraph.clear()
+                run = paragraph.add_run(new_point_4_4)
+                run.font.name = 'Calibri'
+                run.font.size = Pt(9)
+
+                # Вставляем новый параграф для 4.5
+                p4_5 = insert_paragraph_after(paragraph, new_point_4_5)
+                # Вставляем параграфы для 4.6 и его подпунктов
+                lines = new_point_4_6.split('\n')
+                previous_p = p4_5
+                for line in lines:
+                    p = insert_paragraph_after(previous_p, line)
+                    previous_p = p  # Обновляем ссылку на предыдущий параграф
+
+                # После добавления новых пунктов, пропускаем оригинальный 4.5 и 4.6, если они есть
+                # Проверяем следующие параграфы
+                while i + 1 < len(paragraphs) and paragraphs[i + 1].text.strip().startswith('4.'):
+                    i += 1
+                i += 1
+                continue
+
+            else:
+                i += 1
+                continue
+        else:
+            i += 1
+
+
+def replace_text_in_paragraphs(doc, search_text, replace_text):
+    for paragraph in doc.paragraphs:
+        if search_text in paragraph.text:
+            new_text = paragraph.text.replace(search_text, replace_text)
+            replace_paragraph_text_with_styles(paragraph, new_text)
+
+
+def remove_bullet_point(doc, bullet_text):
+    for paragraph in doc.paragraphs:
+        if paragraph.text.strip() == bullet_text:
+            p = paragraph._element
+            p.getparent().remove(p)
+            p._p = p._element = None
+            break  # Предполагаем, что такой пункт единственный
+
 
 def make_text_bold_in_doc(doc, search_text):
     main_text = search_text.split(", именуемое")[0]  # Основная часть текста до ", именуемое"
@@ -47,6 +152,7 @@ def make_text_bold_in_doc(doc, search_text):
                                     after_bold_run = paragraph.add_run(split_text[1])
                                     after_bold_run.font.name = 'Calibri'
                                     after_bold_run.font.size = Pt(9)
+
 
 def replace_paragraph_text_with_styles(paragraph, new_text):
     """
@@ -241,7 +347,6 @@ def add_newline_before_text(doc, search_text):
             replace_paragraph_text_with_styles(paragraph, new_text)
 
 
-
 def process_contract(request):
     if request.method == 'POST':
 
@@ -301,6 +406,8 @@ def process_contract(request):
 
         red_organization_name = request.POST.get('red_organization_name')
 
+        guarantee = request.POST.get('guarantee')
+
         reason = request.POST.get('reason')
         person_name = request.POST.get('person_name')
         director_name = request.POST.get('director_name')
@@ -346,13 +453,39 @@ def process_contract(request):
 
         handle_conditional_sections(doc, edo)
         handle_additional_work_sections(doc, platform_choice)
-        replace_analytics_tags(doc, analitic_system, analitic_system_user, system_search)
 
+        only_yandex_selected = (
+                analitic_system == ['yandex_web'] and
+                analitic_system_user == ['yandex_metric'] and
+                system_search == ['yandex_system']
+        )
+
+        if only_yandex_selected:
+            # Изменение пункта 1.1
+            replace_text_in_paragraphs(doc, 'в поисковых системах Яндекс и Google', 'в поисковой системе Яндекс')
+            replace_text_in_paragraphs(doc, '(далее также – Системы)', '(далее также – Система)')
+
+            # Изменение пункта 1.4.1
+            remove_bullet_point(doc, '- Анализ ссылочного профиля сайта;')
+
+            # Изменение пункта 1.4.4
+            remove_bullet_point(doc, '- Работа с ссылочным профилем сайта (получение ссылок с других сайтов);')
+
+            # Изменение пункта 1.4.6
+            remove_bullet_point(doc,
+                                '- Консультации и рекомендации по развитию сайта и продвижению в поисковых системах Яндекс и Google.')
+
+            # Изменение пункта 2.1.1
+            replace_text_in_paragraphs(doc, 'поисковых системах {YANDEX}{GOOGLE}', 'поисковой системе {YANDEX}{GOOGLE}')
+
+        replace_analytics_tags(doc, analitic_system, analitic_system_user, system_search)
+        if guarantee == 'with_guarantee':
+            add_guarantee_section(doc)
         if choose_executor == 'ИП Михайлов Дмитрий Сергеевич':
             replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'по адаптации и оптимизации web-страниц')
             executor_name_replacement = ('Индивидуальный предприниматель Михайлов Дмитрий Сергеевич, именуемый в '
                                          'дальнейшем «Исполнитель», в лице генерального директора Михайлова Дмитрия '
-                                         'Сергеевича, действующего'
+                                         'Сергеевича, действующего '
                                          'на основании Свидетельства ОГРНИП 320784700136130')
             replacements_executor = {
                 '{CHOOSE_EXECUTOR_NAME}': 'Индивидуальный предприниматель Михайлов Дмитрий Сергеевич',
