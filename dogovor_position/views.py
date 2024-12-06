@@ -44,7 +44,7 @@ def add_guarantee_section(doc):
 
     # Текст новых пунктов
     new_section_header = '4. Ключевые фразы и гарантия'
-    new_point_4_4 = '4.4. Гарантией выполненных работ является вывод в топ-10 поисковой сети Яндекс не менее 30% запросов, указанных в Приложении №1, в течение 6 (шести) месяцев работ.'
+    new_point_4_4 = '4.4. Гарантией выполненных работ является вывод в топ-10 поисковой сети Яндекс не менее 30% запросов, указанных в Приложении №2, в течение 6 (шести) месяцев работ.'
     new_point_4_5 = '4.5. При невыполнении гарантийных обязательств, Исполнитель предоставляет 7 (седьмой) месяц работ бесплатно.'
     new_point_4_6 = '''4.6. Условия гарантии являются недействительными в случаях:
 - действий или бездействий поисковых систем, хостинга, системы сайта – для этого важно настраивать журнал логов;
@@ -217,9 +217,9 @@ def calculate_and_replace_tags_10(doc, request):
         if search_engine in ['GOOGLE', 'YANDEX_GOOGLE']:
             google_req_cost = int(request.POST.get('google_req_cost'))
 
-        if region_name == 'Мск':
+        if region_name == 'Москва':
             req_pay = int(request.POST.get('req_count_top10_msk'))
-        elif region_name == 'СПб':
+        elif region_name == 'Санкт-Петербург':
             req_pay = int(request.POST.get('req_count_top10_spb'))
         else:
             req_pay = int(request.POST.get('req_count_top10_other'))
@@ -255,9 +255,9 @@ def calculate_and_replace_tags_5(doc, request):
         if search_engine in ['GOOGLE', 'YANDEX_GOOGLE']:
             google_req_cost = int(request.POST.get('google_req_cost'))
 
-        if region_name == 'Мск':
+        if region_name == 'Москва':
             req_pay = int(request.POST.get('req_count_top5_msk'))
-        elif region_name == 'СПб':
+        elif region_name == 'Санкт-Петербург':
             req_pay = int(request.POST.get('req_count_top5_spb'))
         else:
             req_pay = int(request.POST.get('req_count_top5_other'))
@@ -293,9 +293,9 @@ def calculate_and_replace_tags_3(doc, request):
         if search_engine in ['GOOGLE', 'YANDEX_GOOGLE']:
             google_req_cost = int(request.POST.get('google_req_cost'))
 
-        if region_name == 'Мск':
+        if region_name == 'Москва':
             req_pay = int(request.POST.get('req_count_top3_msk'))
-        elif region_name == 'СПб':
+        elif region_name == 'Санкт-Петербург':
             req_pay = int(request.POST.get('req_count_top3_spb'))
         else:
             req_pay = int(request.POST.get('req_count_top3_other'))
