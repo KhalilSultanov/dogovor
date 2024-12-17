@@ -610,12 +610,6 @@ def process_contract(request):
                 replace_paragraph_text_with_styles(paragraph, paragraph_text)
 
         for paragraph in doc.paragraphs:
-            if search_engine == 'YANDEX':
-                if 'Google Search' in paragraph.text or 'Google Analytics' in paragraph.text:
-                    new_text = paragraph.text.replace(' и Google Search', '').replace(' и Google Analytics', '')
-                    new_text = new_text.replace(' и ,', '').replace('  ', ' ')
-                    replace_paragraph_text_with_styles(paragraph, new_text.strip())
-        for paragraph in doc.paragraphs:
             if '{REGION_NAME}' in paragraph.text:
                 paragraph_text = paragraph.text.replace('{REGION_NAME}', region_name)
                 replace_paragraph_text_with_styles(paragraph, paragraph_text)
