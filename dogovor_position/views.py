@@ -541,7 +541,7 @@ def process_contract(request):
                 '{CHOOSE_EXECUTOR_KOR_ACC}': '30101810745374525104',
                 '{CHOOSE_EXECUTOR_BANK}': 'ООО "Банк Точка"',
                 '{CHOOSE_EXECUTOR_BIK}': '044525104',
-                '{CHOOSE_EXECUTOR_EMAIL}': 'dima@mikhaylovseo.ru'
+                '{CHOOSE_EXECUTOR_EMAIL}': 'info@mihaylov.digital'
             }
         elif choose_executor == 'ООО «МД»':
             replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'рекламные услуги по продвижению')
@@ -559,7 +559,7 @@ def process_contract(request):
                 '{CHOOSE_EXECUTOR_KOR_ACC}': '30101810745374525104',
                 '{CHOOSE_EXECUTOR_BANK}': 'ООО "Банк Точка"',
                 '{CHOOSE_EXECUTOR_BIK}': '044525104',
-                '{CHOOSE_EXECUTOR_EMAIL}': 'dima@mikhaylovseo.ru'
+                '{CHOOSE_EXECUTOR_EMAIL}': 'info@mihaylov.digital'
             }
         replace_tag_with_text(doc, '{CHOOSE_EXECUTOR_NAME}', executor_name_replacement)
 
