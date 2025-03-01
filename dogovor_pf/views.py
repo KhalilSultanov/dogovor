@@ -223,6 +223,7 @@ def process_contract(request):
                                          'дальнейшем «Исполнитель», в лице Михайлова Дмитрия '
                                          'Сергеевича, действующего'
                                          ' на основании Свидетельства ОГРНИП 320784700136130')
+            replace_tag_with_text(doc, '{ADAPTATION}', 'адаптации и оптимизации web-страниц')
             replacements_executor = {
                 '{CHOOSE_EXECUTOR_NAME}': 'Индивидуальный предприниматель Михайлов Дмитрий Сергеевич',
                 '{CHOOSE_EXECUTOR_INN}': '780256693210',
@@ -241,6 +242,7 @@ def process_contract(request):
                                          'дальнейшем «Исполнитель», в лице генерального директора Михайлова Дмитрия '
                                          'Сергеевича, действующего '
                                          'на основании Устава')
+            replace_tag_with_text(doc, '{ADAPTATION}', 'продвижению')
             replacements_executor = {
                 '{CHOOSE_EXECUTOR_NAME}': 'Общество с ограниченной ответственностью "Михайлов Диджитал"',
                 '{CHOOSE_EXECUTOR_INN}': '7810962062',
