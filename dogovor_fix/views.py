@@ -203,12 +203,33 @@ def replace_analytics_tags(doc, analitic_system, analitic_system_user, system_se
     replace_tag_with_text(doc, '{YANDEX_METRIC}', user_analytics)
     replace_tag_with_text(doc, '{GOOGLE_ANALITIC}', '')  # Тег удаляем, текст уже вставлен
 
-    # Замена для "Яндекс" и "Google" в контексте поисковой системы
-    yandex_search_text = 'Яндекс' if 'yandex_system' in system_search else ''
-    google_search_text = 'Google' if 'google_system' in system_search else ''
-    search_analytics = ' и '.join(filter(None, [yandex_search_text, google_search_text]))
-    replace_tag_with_text(doc, '{YANDEX}', search_analytics)
-    replace_tag_with_text(doc, '{GOOGLE}', '')  # Тег удаляем, текст уже вставлен
+    # Определяем текст для вставки в основной текст договора
+    if 'yandex_system' in system_search and 'google_system' in system_search:
+        search_analytics = "в поисковых системах Яндекс и Google (далее также – Системы)"
+    elif 'yandex_system' in system_search:
+        search_analytics = "в поисковой системе Яндекс (далее также – Система)"
+    elif 'google_system' in system_search:
+        search_analytics = "в поисковой системе Google (далее также – Система)"
+    else:
+        search_analytics = ""
+
+    replace_tag_with_text(doc, '{SEARCH_SYSTEMS}', search_analytics)  # Используем общий тег
+
+    # Вставка текста с разделенной логикой для отдельных тегов
+    if 'yandex_system' in system_search and 'google_system' in system_search:
+        replace_tag_with_text(doc, '{YANDEX}', "Яндекс")
+        replace_tag_with_text(doc, '{GOOGLE}', " и Google")
+    elif 'yandex_system' in system_search:
+        replace_tag_with_text(doc, '{YANDEX}', "Яндекс")
+        replace_tag_with_text(doc, '{GOOGLE}', '')  # Удаляем Google
+    elif 'google_system' in system_search:
+        replace_tag_with_text(doc, '{YANDEX}', '')  # Удаляем Яндекс
+        replace_tag_with_text(doc, '{GOOGLE}', "Google")
+    else:
+        replace_tag_with_text(doc, '{YANDEX}', '')
+        replace_tag_with_text(doc, '{GOOGLE}', '')
+
+    print(system_search)
 
 
 def replace_tag_with_text(doc, tag, text):
