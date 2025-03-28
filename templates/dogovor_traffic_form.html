@@ -345,9 +345,9 @@
     <div id="search_engine">
         <label>Доступ к системе анализа:</label><br>
         <label for="yandex">Яндекс.Метрика</label>
-        <input type="radio" id="yandex" name="search_engine" value="yandex" required>
+        <input type="checkbox" id="yandex" name="search_engine" value="yandex" required>
         <label for="google">Google Analytics</label>
-        <input type="radio" id="google" name="search_engine" value="google">
+        <input type="checkbox" id="google" name="search_engine" value="google">
     </div>
     <br>
 
@@ -499,6 +499,12 @@
             // Добавляем обработчик события change
             checkboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', () => {
+
+                    // Исключаем группу с name="analitic_system"
+                    if (checkbox.name === 'analitic_system' || checkbox.name === 'search_engine') {
+                        return;
+                    }
+
                     // Если текущий чекбокс отмечен
                     if (checkbox.checked) {
                         // Снимаем отметку со всех других чекбоксов в текущем контейнере

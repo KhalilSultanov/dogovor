@@ -537,10 +537,10 @@ def process_contract(request):
                 '{CHOOSE_EXECUTOR_OGRNIP}': 'ОГРНИП: 320784700136130',
                 '{CHOOSE_EXECUTOR_ADRESS}': '194295, Россия, г. Санкт-Петербург, пр-кт Северный, д. 24, корпус 1, '
                                             'кв. 33',
-                '{CHOOSE_EXECUTOR_CHECKING_ACC}': '40802810201500152101',
-                '{CHOOSE_EXECUTOR_KOR_ACC}': '30101810745374525104',
-                '{CHOOSE_EXECUTOR_BANK}': 'ООО "Банк Точка"',
-                '{CHOOSE_EXECUTOR_BIK}': '044525104',
+                '{CHOOSE_EXECUTOR_CHECKING_ACC}': '40802810000100151981',
+                '{CHOOSE_EXECUTOR_KOR_ACC}': '30101810645250000801',
+                '{CHOOSE_EXECUTOR_BANK}': 'ООО "Бланк банк"',
+                '{CHOOSE_EXECUTOR_BIK}': '044525801',
                 '{CHOOSE_EXECUTOR_EMAIL}': 'info@mihaylov.digital'
             }
         elif choose_executor == 'ООО «МД»':

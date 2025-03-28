@@ -101,6 +101,8 @@ def replace_analytics_tags(doc, analitic_system, analitic_system_user, system_se
     # Замена для "Яндекс" и "Google" в контексте поисковой системы
     yandex_search_text = 'Яндекс.Метрика' if 'yandex_system' in system_search else ''
     google_search_text = 'Google Analytics' if 'google_system' in system_search else ''
+
+
     search_analytics = ' и '.join(filter(None, [yandex_search_text, google_search_text]))
     replace_tag_with_text(doc, '{YANDEX}', search_analytics)
     replace_tag_with_text(doc, '{GOOGLE}', '')  # Тег удаляем, текст уже вставлен
@@ -295,7 +297,8 @@ def process_contract(request):
         date_day = request.POST.get('date_day')
         site_name = request.POST.get('site_name')
 
-        search_engine_choice = request.POST.get('search_engine', None)
+        search_engine_choice = request.POST.getlist('search_engine', None)
+
         customer_id = request.POST.get('customer_id')
 
         analitic_system = request.POST.getlist('analitic_system')
@@ -373,7 +376,9 @@ def process_contract(request):
 
         handle_conditional_sections(doc, edo)
         handle_additional_work_sections(doc, platform_choice)
+
         handle_search_engine(doc, search_engine_choice)
+
         replace_analytics_tags(doc, analitic_system, analitic_system_user, system_search)
 
         if choose_executor == 'ИП Михайлов Дмитрий Сергеевич':
@@ -411,10 +416,10 @@ def process_contract(request):
                 '{CHOOSE_EXECUTOR_OGRNIP}': 'ОГРН: 1247800061464',
                 '{CHOOSE_EXECUTOR_ADRESS}': '196142, Россия, г. Санкт-Петербург, ул. Пулковская, д. 2, корпус 1, '
                                             'литера А, оф 25, помещ. 66-Н',
-                '{CHOOSE_EXECUTOR_CHECKING_ACC}': '40702810320000118082',
-                '{CHOOSE_EXECUTOR_KOR_ACC}': '30101810745374525104',
-                '{CHOOSE_EXECUTOR_BANK}': 'ООО "Банк Точка"',
-                '{CHOOSE_EXECUTOR_BIK}': '044525104',
+                '{CHOOSE_EXECUTOR_CHECKING_ACC}': '40802810000100151981',
+                '{CHOOSE_EXECUTOR_KOR_ACC}': '30101810645250000801',
+                '{CHOOSE_EXECUTOR_BANK}': 'ООО "Бланк банк"',
+                '{CHOOSE_EXECUTOR_BIK}': '044525801',
                 '{CHOOSE_EXECUTOR_EMAIL}': 'info@mihaylov.digital'
             }
         replace_tag_with_text(doc, '{CHOOSE_EXECUTOR_NAME}', executor_name_replacement)
