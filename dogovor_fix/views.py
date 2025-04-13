@@ -217,19 +217,21 @@ def replace_analytics_tags(doc, analitic_system, analitic_system_user, system_se
 
     # Вставка текста с разделенной логикой для отдельных тегов
     if 'yandex_system' in system_search and 'google_system' in system_search:
+        replace_tag_with_text(doc, '{SYSTEMS}', "поисковых системах ")
         replace_tag_with_text(doc, '{YANDEX}', "Яндекс")
         replace_tag_with_text(doc, '{GOOGLE}', " и Google")
     elif 'yandex_system' in system_search:
+        replace_tag_with_text(doc, '{SYSTEMS}', "поисковой системе ")
         replace_tag_with_text(doc, '{YANDEX}', "Яндекс")
-        replace_tag_with_text(doc, '{GOOGLE}', '')  # Удаляем Google
+        replace_tag_with_text(doc, '{GOOGLE}', '')
     elif 'google_system' in system_search:
-        replace_tag_with_text(doc, '{YANDEX}', '')  # Удаляем Яндекс
+        replace_tag_with_text(doc, '{SYSTEMS}', "поисковой системе ")
+        replace_tag_with_text(doc, '{YANDEX}', '')
         replace_tag_with_text(doc, '{GOOGLE}', "Google")
     else:
+        replace_tag_with_text(doc, '{SYSTEMS}', '')
         replace_tag_with_text(doc, '{YANDEX}', '')
         replace_tag_with_text(doc, '{GOOGLE}', '')
-
-    print(system_search)
 
 
 def replace_tag_with_text(doc, tag, text):
@@ -514,14 +516,14 @@ def process_contract(request):
                 '{CHOOSE_EXECUTOR_OGRNIP}': 'ОГРНИП: 320784700136130',
                 '{CHOOSE_EXECUTOR_ADRESS}': '194295, Россия, г. Санкт-Петербург, пр-кт Северный, д. 24, корпус 1, '
                                             'кв. 33',
-                '{CHOOSE_EXECUTOR_CHECKING_ACC}': '40802810000100151981',
-                '{CHOOSE_EXECUTOR_KOR_ACC}': '30101810645250000801',
-                '{CHOOSE_EXECUTOR_BANK}': 'ООО "Бланк банк"',
-                '{CHOOSE_EXECUTOR_BIK}': '044525801',
+                '{CHOOSE_EXECUTOR_CHECKING_ACC}': '40802810201500152101',
+                '{CHOOSE_EXECUTOR_KOR_ACC}': '30101810745374525104',
+                '{CHOOSE_EXECUTOR_BANK}': 'ООО "Банк Точка"',
+                '{CHOOSE_EXECUTOR_BIK}': '044525104',
                 '{CHOOSE_EXECUTOR_EMAIL}': 'info@mihaylov.digital'
             }
         elif choose_executor == 'ООО «МД»':
-            replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'по продвижению')
+            replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'рекламные услуги по продвижению')
             executor_name_replacement = ('Общество с ограниченной ответственностью "Михайлов Диджитал", именуемое в '
                                          'дальнейшем «Исполнитель», в лице генерального директора Михайлова Дмитрия '
                                          'Сергеевича, действующего '
