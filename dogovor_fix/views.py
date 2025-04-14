@@ -506,6 +506,7 @@ def process_contract(request):
             add_guarantee_section(doc)
         if choose_executor == 'ИП Михайлов Дмитрий Сергеевич':
             replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'по адаптации и оптимизации web-страниц')
+            replace_tag_with_text(doc, '{PROVIDE_SERVICES}', 'Оказать своевременно и в полном объеме рекламные услуги по продвижению web-страниц сайта')
             executor_name_replacement = ('Индивидуальный предприниматель Михайлов Дмитрий Сергеевич, именуемый в '
                                          'дальнейшем «Исполнитель», в лице генерального директора Михайлова Дмитрия '
                                          'Сергеевича, действующего '
@@ -524,6 +525,7 @@ def process_contract(request):
             }
         elif choose_executor == 'ООО «МД»':
             replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'рекламные услуги по продвижению')
+            replace_tag_with_text(doc, '{PROVIDE_SERVICES}', 'Оказать своевременно и в полном объеме услуги по адаптации и оптимизации web-страниц сайта')
             executor_name_replacement = ('Общество с ограниченной ответственностью "Михайлов Диджитал", именуемое в '
                                          'дальнейшем «Исполнитель», в лице генерального директора Михайлова Дмитрия '
                                          'Сергеевича, действующего '
