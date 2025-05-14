@@ -237,12 +237,12 @@ def process_contract(request):
                 '{CHOOSE_EXECUTOR_EMAIL}': 'info@mihaylov.digital'
             }
         elif choose_executor == 'ООО «МД»':
-            replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'рекламные услуги по продвижению')
+            replace_tag_with_text(doc, '{PREDMET_DOGOVORA1}', 'рекламные услуги по поисковой оптимизации')
             executor_name_replacement = ('Общество с ограниченной ответственностью "Михайлов Диджитал", именуемый в '
                                          'дальнейшем «Исполнитель», в лице генерального директора Михайлова Дмитрия '
                                          'Сергеевича, действующего '
                                          'на основании Устава')
-            replace_tag_with_text(doc, '{ADAPTATION}', 'продвижению')
+            replace_tag_with_text(doc, '{ADAPTATION}', 'поисковой оптимизации')
             replacements_executor = {
                 '{CHOOSE_EXECUTOR_NAME}': 'Общество с ограниченной ответственностью "Михайлов Диджитал"',
                 '{CHOOSE_EXECUTOR_INN}': '7810962062',
