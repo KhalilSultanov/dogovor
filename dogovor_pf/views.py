@@ -2,7 +2,6 @@ import os
 from django.http import HttpResponse
 from django.shortcuts import render
 from docx import Document
-from docx.enum.text import WD_COLOR_INDEX
 from docx.shared import Pt, Inches
 from num2words import num2words
 
