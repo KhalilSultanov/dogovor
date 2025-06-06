@@ -15,4 +15,5 @@ urlpatterns = [
     path('main/dogovor_traffic/', include('dogovor_traffic.urls')),
     path('main/dogovor_site_create/', include('dogovor_site_create.urls')),
     path('main/dogovor_yandex_direct/', include('dogovor_yandex_direct.urls')),
+    path('main/dogovor_lids/', include('dogovor_lids.urls')),
 ]

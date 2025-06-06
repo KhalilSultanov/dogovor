@@ -5,8 +5,6 @@ from docx import Document
 from docx.shared import Pt, Inches
 from num2words import num2words
 
-from dogovor_fix.views import replace_underscores_with_signature, find_and_offset_director_text
-
 
 def add_styled_run(paragraph, text, bold=False, size=Pt(9)):
     run = paragraph.add_run(text)
